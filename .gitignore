@@ -14,3 +14,6 @@ Thumbs.db
 # Node (caso venha a usar)
 node_modules/
 dist/
+
+# claude
+.claude/
