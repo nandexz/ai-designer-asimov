@@ -25,13 +25,7 @@
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
             --pad-x: clamp(24px, 5vw, 64px);
             --video-pos: 50% 50%;
-            /* desloca o sujeito do vídeo para a direita, liberando a coluna de texto */
-            --video-shift: 0vw;
-            /* escala do vídeo dentro da composição (1 = cover puro) */
-            --video-zoom: 1;
         }
-        @media (min-width: 701px) { :root { --video-shift: 8vw; --video-zoom: 0.92; } }
-        @media (min-width: 1025px) { :root { --video-shift: 14vw; --video-zoom: 0.84; } }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -174,39 +168,33 @@
             overflow: hidden;
         }
 
-        /* --- Camada de mídia: vídeo full-screen --- */
-        .hero__media { position: absolute; inset: 0; z-index: 1; }
-        /* A caixa se estende além da borda direita: o centro do enquadramento
-           (onde está o produto) cai à direita do centro da tela. */
-        .hero__media-inner {
-            position: absolute;
-            top: 0; bottom: 0; left: 0;
-            right: calc(-1 * var(--video-shift));
-            will-change: transform;
-        }
+        /* --- Camada de mídia: vídeo full-screen ---
+           object-fit: contain mantém o quadro inteiro (gato + boné) sempre
+           disponível; o JS amplia até cobrir a tela nos closes e recua para
+           contain nas pontas. Como o fundo de estúdio é branco e se funde com
+           a página, mesmo "contido" o vídeo lê como tela cheia. */
+        .hero__media { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+        .hero__media-inner { position: absolute; inset: 0; will-change: transform; }
         .hero__media video,
         .hero__media img {
             position: absolute; inset: 0;
             width: 100%; height: 100%;
-            object-fit: cover;
-            object-position: var(--video-pos);
+            object-fit: contain;
+            object-position: center center;
+            transform-origin: center center;
+            will-change: transform;
         }
-        /* O vídeo abre reduzido (produto menor, flutuando no branco) e cresce
-           até full-bleed nos primeiros ~28% do scroll — antes dos closes,
-           ele já ocupa a tela inteira de novo. */
-        .hero__media video,
-        .hero__media img {
-            transform: scale(var(--video-zoom));
-            transform-origin: 56% 54%;
+        /* Em telas estreitas (mobile) o vídeo volta a cobrir a tela inteira. */
+        @media (max-width: 700px) {
+            .hero__media video,
+            .hero__media img { object-fit: cover; object-position: var(--video-pos); }
         }
-        /* Feather de borda: dissolve a emenda enquanto o vídeo está reduzido;
-           o scroll o desfaz junto com o crescimento do vídeo. */
+        /* Feather lateral: dissolve a emenda entre o quadro e a página nas barras
+           claras laterais; o JS o revela só quando o vídeo está contido. */
         .ov--feather {
             background:
-                linear-gradient(180deg, var(--bg-main), rgba(246, 247, 245, 0) 14%),
-                linear-gradient(0deg, var(--bg-main), rgba(246, 247, 245, 0) 14%),
-                linear-gradient(90deg, var(--bg-main), rgba(246, 247, 245, 0) 12%),
-                linear-gradient(270deg, var(--bg-main), rgba(246, 247, 245, 0) 12%);
+                linear-gradient(90deg, var(--bg-main), rgba(246, 247, 245, 0) 11%),
+                linear-gradient(270deg, var(--bg-main), rgba(246, 247, 245, 0) 11%);
             opacity: 0;
         }
         .hero__fallback { display: none; }
@@ -290,7 +278,8 @@
         .eyebrow {
             display: flex; align-items: center; gap: 14px;
             margin-bottom: 36px;
-            animation: rise 1s var(--ease) 0.55s both;
+            /* fill backwards: ao terminar, libera o transform para o parallax */
+            animation: rise 1s var(--ease) 0.55s backwards;
         }
         .eyebrow__line { width: 40px; height: 1px; background: rgba(63, 85, 107, 0.7); }
         .eyebrow__text {
@@ -333,7 +322,7 @@
             font-weight: 400;
             line-height: 1.65;
             color: rgba(45, 50, 47, 0.75);
-            animation: rise 1s var(--ease) 0.95s both;
+            animation: rise 1s var(--ease) 0.95s backwards;
         }
         .subcopy em {
             font-family: 'Playfair Display', serif;
@@ -346,7 +335,7 @@
         .hero__actions {
             display: flex; align-items: center; flex-wrap: wrap; gap: 20px;
             margin-top: 44px;
-            animation: rise 1s var(--ease) 1.1s both;
+            animation: rise 1s var(--ease) 1.1s backwards;
         }
 
         .btn {
@@ -403,7 +392,7 @@
             padding: 120px 0 110px;
             text-align: right;
             will-change: transform;
-            animation: rise 1.2s var(--ease) 1.25s both;
+            animation: rise 1.2s var(--ease) 1.25s backwards;
         }
         .rail__fig {
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -535,12 +524,33 @@
             color: rgba(45, 50, 47, 0.55);
         }
 
+        /* --- Marca vertical lateral (lê de baixo para cima) --- */
+        .hero__sidebrand {
+            position: absolute; left: 30px; top: 50%;
+            z-index: 11;
+            writing-mode: vertical-rl;
+            transform: translateY(-50%) rotate(180deg);
+            transform-origin: center center;
+        }
+        /* entrada anima o filho (opacity), deixando o pai livre para o JS
+           controlar o crossfade com o lockup final */
+        .hero__sidebrand .text-outline {
+            display: inline-block;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase;
+            font-size: clamp(0.85rem, 1vw, 1.1rem);
+            letter-spacing: 0.5em;
+            -webkit-text-stroke-width: 1px;
+            animation: rise 1.2s var(--ease) 1.3s both;
+        }
+
         /* ============================================================
            RESPONSIVO
            ============================================================ */
         @media (max-width: 1024px) {
             .hero__rail { display: none; }
             .site-nav { display: none; }
+            .hero__sidebrand { display: none; }
         }
 
         @media (max-width: 700px) {
@@ -576,9 +586,10 @@
             .headline .line > span { animation: none; transform: none; }
             .scroll-hint__line::after, .bottom__tc::before, .hero__veil-bar::after { animation: none; }
             .hero__final { display: none; }
-            /* vídeo em loop ocupa a tela inteira, sem push-in */
-            .hero__media video, .hero__media img { transform: none; }
+            /* vídeo em loop cobre a tela inteira, sem push-in nem pull-back */
+            .hero__media video, .hero__media img { transform: none; object-fit: cover; }
             .ov--feather { display: none; }
+            .hero__sidebrand { animation: none; opacity: 1; }
         }
     </style>
 </head>
@@ -626,7 +637,7 @@
                 <!-- Camada 1: mídia cinematográfica -->
                 <div class="hero__media">
                     <div class="hero__media-inner" id="media-inner">
-                        <video id="hero-video" muted playsinline preload="auto" crossorigin="anonymous">
+                        <video id="hero-video" muted playsinline preload="auto">
                             <!-- versão otimizada para scrub: 1920px, intra-only (todo frame é keyframe) -->
                             <source src="assets/video-chapeu-rosa-scrub.mp4" type="video/mp4" />
                             <source src="assets/raw_files/video-chapeu-rosa-e-gato-bonito.mp4" type="video/mp4" />
@@ -640,6 +651,11 @@
                     <div class="ov ov--bottom"></div>
                     <div class="ov ov--vignette" id="ov-vignette"></div>
                     <div class="ov ov--feather" id="ov-feather"></div>
+                </div>
+
+                <!-- Marca vertical na lateral esquerda — vazada, preenche no hover -->
+                <div class="hero__sidebrand" id="side-brand">
+                    <span class="text-outline">Ariete</span>
                 </div>
 
                 <!-- Camada 2: lettering + CTAs -->
@@ -727,10 +743,9 @@
         </style>
     </noscript>
 
-    <!-- GSAP + ScrollTrigger + Lenis (CDN) — com fallback nativo abaixo -->
+    <!-- GSAP + ScrollTrigger (CDN) — com fallback em JS puro abaixo -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
 
     <script>
         (function () {
@@ -750,28 +765,61 @@
             const progressBar = document.getElementById('scroll-progress');
             const fallbackImg = document.querySelector('.hero__fallback');
             const ovFeather = document.getElementById('ov-feather');
+            const sideBrand = document.getElementById('side-brand');
             const hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
 
             /* ------------------------------------------------------------
-               Arco de escala do vídeo (compartilhado GSAP + fallback):
-               abre reduzido → cresce a full-bleed (push-in) → recua no fim
-               (pull-back) revelando o quadro inteiro do gato + boné.
+               Envelope de escala do vídeo (compartilhado GSAP + fallback).
+               Em ≥701px o vídeo é object-fit: contain (quadro inteiro visível).
+               A escala segue um sino: contain (1×) nas pontas — abertura com o
+               boné menor e frame final com gato + boné inteiros, lendo como
+               tela cheia sobre o branco — e cresce até cobrir a tela (coverScale)
+               no pico, para os closes cinematográficos do meio.
                ------------------------------------------------------------ */
             const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
-            const PUSH_END = 0.28;     // fim do push-in
-            const PULL_START = 0.74;   // início do pull-back
-            const PULL_SCALE = 0.76;   // escala final (mostra o quadro completo)
-            const videoZoom = () => parseFloat(
-                getComputedStyle(document.documentElement).getPropertyValue('--video-zoom')
-            ) || 1;
-            function vScaleFor(p) {
-                const z0 = videoZoom();
-                const pushIn = clamp01(p / PUSH_END);
-                const pullBack = clamp01((p - PULL_START) / (1 - PULL_START));
-                return z0 + (1 - z0) * pushIn - (1 - PULL_SCALE) * pullBack;
+            const smooth = (t) => t * t * (3 - 2 * t);
+            const PEAK_IN = 0.40;    // sobe até o pico (close do bordado)
+            const PEAK_OUT = 0.54;   // começa a recuar, revelando o quadro
+            const SHIFT_FRAC = 0.06; // deslocamento à direita só na abertura
+            const SHIFT_END = 0.26;
+            const desktopMQ = window.matchMedia('(min-width: 701px)');
+
+            // escala mínima para o quadro contido cobrir a viewport inteira
+            let coverScale = 16 / 9;
+            let maxScroll = 1;
+            function recomputeMetrics() {
+                const rv = (video.videoWidth && video.videoHeight)
+                    ? video.videoWidth / video.videoHeight : 16 / 9;
+                const rw = window.innerWidth / window.innerHeight;
+                coverScale = Math.max(rw / rv, rv / rw) * 1.04;
+                maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
             }
-            // feather aparece sempre que o vídeo está abaixo de full-bleed
-            const featherFor = (p) => clamp01((1 - vScaleFor(p)) / 0.30);
+            recomputeMetrics();
+            window.addEventListener('resize', recomputeMetrics);
+            window.addEventListener('load', recomputeMetrics);
+            video.addEventListener('loadedmetadata', recomputeMetrics);
+
+            function envFor(p) {
+                if (p <= PEAK_IN) return smooth(clamp01(p / PEAK_IN));
+                if (p >= PEAK_OUT) return 1 - smooth(clamp01((p - PEAK_OUT) / (1 - PEAK_OUT)));
+                return 1; // platô no pico
+            }
+            // aplica escala + deslocamento + feather ao vídeo (e à imagem fallback)
+            function applyVideo(p) {
+                if (!desktopMQ.matches) {
+                    video.style.transform = '';
+                    fallbackImg.style.transform = '';
+                    ovFeather.style.opacity = '0';
+                    return;
+                }
+                const env = envFor(p);
+                const s = 1 + (coverScale - 1) * env;
+                const tx = window.innerWidth * SHIFT_FRAC * (1 - smooth(clamp01(p / SHIFT_END)));
+                const tf = 'translateX(' + tx.toFixed(2) + 'px) scale(' + s.toFixed(4) + ')';
+                video.style.transform = tf;
+                fallbackImg.style.transform = tf;
+                ovFeather.style.opacity = (1 - env).toFixed(3);
+            }
 
             /* ------------------------------------------------------------
                Vídeo: estados de prontidão e fallback
@@ -829,8 +877,14 @@
             function tick(now) {
                 const dt = Math.min((now - lastTick) / 1000, 0.1);
                 lastTick = now;
-                // lerp independente de frame-rate
+                // alvo lido direto da posição de scroll — robusto a qualquer
+                // origem do movimento (Lenis, nativo, teclado) e imune a
+                // dessincronização de eventos
+                targetP = clamp01(window.scrollY / maxScroll);
+                // lerp independente de frame-rate, com snap ao chegar perto —
+                // evita micro-atualizações perpétuas quando o scroll está parado
                 displayP += (targetP - displayP) * (1 - Math.pow(0.0001, dt));
+                if (Math.abs(targetP - displayP) < 0.0004) displayP = targetP;
 
                 const dur = video.duration;
                 if (!hero.classList.contains('is-fallback') && dur && video.readyState >= 2 && !video.seeking) {
@@ -842,6 +896,11 @@
                 if (railFill) railFill.style.height = (displayP * 100) + '%';
                 if (progressBar) progressBar.style.transform = 'scaleX(' + displayP + ')';
 
+                // escala/feather do vídeo seguem o progresso suavizado
+                applyVideo(displayP);
+                // marca lateral some no clímax, cedendo lugar ao lockup final
+                if (sideBrand) sideBrand.style.opacity = clamp01(1 - (displayP - 0.74) / 0.08).toFixed(3);
+
                 requestAnimationFrame(tick);
             }
             requestAnimationFrame(tick);
@@ -852,24 +911,25 @@
             if (hasGsap) {
                 gsap.registerPlugin(ScrollTrigger);
 
-                if (typeof window.Lenis !== 'undefined') {
-                    const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
-                    lenis.on('scroll', ScrollTrigger.update);
-                    gsap.ticker.add((time) => lenis.raf(time * 1000));
-                    gsap.ticker.lagSmoothing(0);
+                // (o avanço do vídeo — targetP — é lido da posição de scroll no
+                // tick; a timeline abaixo cuida só do parallax da interface. O
+                // scrub já é suavizado pelo lerp de displayP, então não há Lenis:
+                // ler a posição nativa mantém vídeo e parallax sempre em sincronia.)
+
+                // A experiência é scrubbed e deve sempre começar do topo — evita
+                // ficar preso no fim (tela branca) quando o navegador restaura a
+                // posição de rolagem ao recarregar.
+                function resetToTop() {
+                    window.scrollTo(0, 0);
+                    targetP = 0; displayP = 0;
+                    ScrollTrigger.refresh();
                 }
+                window.addEventListener('load', () => requestAnimationFrame(resetToTop));
+                resetToTop();
 
-                ScrollTrigger.create({
-                    trigger: hero,
-                    start: 'top top',
-                    end: 'bottom bottom',
-                    scrub: true,
-                    onUpdate: (self) => { targetP = self.progress; }
-                });
-
-                // Parallax em camadas independentes sobre o vídeo.
-                // A escala do vídeo + feather são procedurais (onUpdate), seguindo
-                // o arco push-in → full-bleed → pull-back de vScaleFor().
+                // Parallax das camadas de interface sobre o vídeo. A escala do
+                // vídeo + feather são procedurais (tick → applyVideo), então a
+                // timeline cuida só do texto, trilho, overlays e lockup final.
                 const tl = gsap.timeline({
                     defaults: { ease: 'none' },
                     scrollTrigger: {
@@ -877,26 +937,20 @@
                         start: 'top top',
                         end: 'bottom bottom',
                         scrub: 0.6,
-                        invalidateOnRefresh: true,
-                        onUpdate: (self) => {
-                            const vs = vScaleFor(self.progress);
-                            video.style.transform = 'scale(' + vs + ')';
-                            fallbackImg.style.transform = 'scale(' + vs + ')';
-                            ovFeather.style.opacity = featherFor(self.progress);
-                        }
+                        invalidateOnRefresh: true
                     }
                 });
 
-                tl.fromTo('#media-inner', { scale: 1, yPercent: 0 },
-                      { scale: 1.05, yPercent: -1.4, duration: PULL_START, ease: 'none' }, 0)
-                  .to('#media-inner', { scale: 1, yPercent: 0, duration: 1 - PULL_START, ease: 'power2.inOut' }, PULL_START)
-                  .to('#hero-copy', { y: () => -window.innerHeight * 0.22, duration: 1 }, 0)
+                // parallax tipográfico em camadas: o título sobe devagar;
+                // subtítulo e botões sobem progressivamente mais rápido
+                tl.to(['.eyebrow', '.headline'], { y: () => -window.innerHeight * 0.16, duration: 1 }, 0)
+                  .to('.subcopy', { y: () => -window.innerHeight * 0.27, duration: 1 }, 0)
+                  .to('.hero__actions', { y: () => -window.innerHeight * 0.36, duration: 1 }, 0)
                   .to('#hero-copy', { autoAlpha: 0, duration: 0.3, ease: 'power1.in' }, 0.18)
                   .to('#hero-rail', { y: () => window.innerHeight * 0.08, duration: 1 }, 0)
-                  .to('#ov-left', { opacity: 0.22, duration: 0.45 }, 0.22)
-                  .fromTo('#ov-vignette', { opacity: 0.3 },
-                      { opacity: 0.5, duration: PULL_START, ease: 'none' }, 0)
-                  .to('#ov-vignette', { opacity: 0.14, duration: 1 - PULL_START }, PULL_START)
+                  .to('#ov-left', { opacity: 0.18, duration: 0.45 }, 0.22)
+                  .fromTo('#ov-vignette', { opacity: 0.28 }, { opacity: 0.4, duration: 0.5 }, 0)
+                  .to('#ov-vignette', { opacity: 0.12, duration: 0.5 }, 0.5)
                   .to('#scroll-hint', { autoAlpha: 0, duration: 0.07 }, 0.02)
                   .fromTo('#hero-final',
                       { autoAlpha: 0, x: -28 },
@@ -921,27 +975,26 @@
                    ------------------------------------------------------------ */
                 const copy = document.getElementById('hero-copy');
                 const rail = document.getElementById('hero-rail');
-                const media = document.getElementById('media-inner');
                 const hint = document.getElementById('scroll-hint');
                 const finalLockup = document.getElementById('hero-final');
+                const copyLayers = [
+                    { els: document.querySelectorAll('.eyebrow, .headline'), speed: 0.16 },
+                    { els: document.querySelectorAll('.subcopy'), speed: 0.27 },
+                    { els: document.querySelectorAll('.hero__actions'), speed: 0.36 }
+                ];
 
+                // escala/feather do vídeo e fade da marca lateral já vêm do tick;
+                // aqui só movemos as demais camadas de interface.
                 function onScroll() {
-                    const max = hero.offsetHeight - window.innerHeight;
-                    targetP = max > 0 ? clamp01(window.scrollY / max) : 0;
-                    const p = targetP;
+                    // targetP do vídeo é lido no tick; aqui usamos um p local só
+                    // para o parallax da interface
+                    const p = clamp01(window.scrollY / maxScroll);
 
-                    // mesmo arco do GSAP: push-in → full-bleed → pull-back
-                    const vs = vScaleFor(p);
-                    video.style.transform = 'scale(' + vs + ')';
-                    fallbackImg.style.transform = 'scale(' + vs + ')';
-                    ovFeather.style.opacity = String(featherFor(p));
-
-                    // parallax sutil de profundidade, que recua junto no pull-back
-                    const pull = clamp01((p - PULL_START) / (1 - PULL_START));
-                    const drift = clamp01(p / PULL_START) * (1 - pull);
-                    media.style.transform = 'scale(' + (1 + 0.05 * drift) + ') translateY(' + (-1.4 * drift) + '%)';
-
-                    copy.style.transform = 'translateY(' + (-p * window.innerHeight * 0.22) + 'px)';
+                    // título devagar, subtítulo e botões progressivamente mais rápido
+                    copyLayers.forEach((layer) => {
+                        const y = -p * window.innerHeight * layer.speed;
+                        layer.els.forEach((el) => { el.style.transform = 'translateY(' + y + 'px)'; });
+                    });
                     copy.style.opacity = String(Math.max(1 - Math.max(p - 0.18, 0) / 0.3, 0));
                     rail.style.transform = 'translateY(' + (p * window.innerHeight * 0.08) + 'px)';
                     hint.style.opacity = p > 0.03 ? '0' : '1';
