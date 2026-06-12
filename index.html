@@ -18,13 +18,33 @@
            ============================================================ */
         :root {
             --bg-main: #f6f7f5;       /* Branco Geleira */
+            --bg-rgb: 246, 247, 245;
             --bg-alt: #ebedea;        /* Base Alpina */
             --ink: #2d322f;           /* Tinta Granito */
+            --ink-rgb: 45, 50, 47;
             --accent: #3F556B;        /* Aço Glacial */
+            --accent-rgb: 63, 85, 107;
             --charcoal: #1e2420;      /* Carvão Noturno */
+            --btn-primary-bg: #1e2420;
+            --btn-primary-ink: #ffffff;
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
             --pad-x: clamp(24px, 5vw, 64px);
             --video-pos: 50% 50%;
+        }
+
+        /* ============================================================
+           MODO ESCURO — calibrado no estúdio do vídeo preto (#2a–#3f)
+           ============================================================ */
+        html.dark {
+            --bg-main: #212624;
+            --bg-rgb: 33, 38, 36;
+            --bg-alt: #1a1e1c;
+            --ink: #edf0ee;
+            --ink-rgb: 237, 240, 238;
+            --accent: #8AA4BD;        /* Aço Glacial clareado p/ contraste */
+            --accent-rgb: 138, 164, 189;
+            --btn-primary-bg: #edf0ee;
+            --btn-primary-ink: #1a1d1b;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,6 +58,7 @@
             letter-spacing: -0.01em;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.6s var(--ease), color 0.6s var(--ease);
         }
 
         ::selection { background: var(--accent); color: #fff; }
@@ -53,7 +74,7 @@
            No hover, o glifo vazado se preenche com a cor de acento. */
         .text-outline {
             color: transparent;
-            -webkit-text-stroke: 1.5px rgba(45, 50, 47, 0.85);
+            -webkit-text-stroke: 1.5px rgba(var(--ink-rgb), 0.85);
             transition: color 0.6s var(--ease), -webkit-text-stroke-color 0.6s var(--ease);
         }
         .text-outline:hover {
@@ -69,8 +90,13 @@
             position: fixed; inset: 0;
             pointer-events: none; z-index: 100;
             opacity: 0.035; mix-blend-mode: multiply;
-            background-image: radial-gradient(rgba(45, 50, 47, 0.55) 1px, transparent 1px);
+            background-image: radial-gradient(rgba(var(--ink-rgb), 0.55) 1px, transparent 1px);
             background-size: 3px 3px;
+        }
+        html.dark .grain {
+            mix-blend-mode: screen;
+            opacity: 0.05;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.45) 1px, transparent 1px);
         }
 
         /* Barra de progresso de leitura (topo) */
@@ -111,8 +137,8 @@
         .brand__chip {
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;
-            color: rgba(45, 50, 47, 0.6);
-            border: 1px solid rgba(45, 50, 47, 0.2);
+            color: rgba(var(--ink-rgb), 0.6);
+            border: 1px solid rgba(var(--ink-rgb), 0.2);
             padding: 4px 8px;
         }
 
@@ -121,7 +147,7 @@
             position: relative;
             font-size: 11px; font-weight: 600;
             text-transform: uppercase; letter-spacing: 0.15em;
-            color: rgba(45, 50, 47, 0.7);
+            color: rgba(var(--ink-rgb), 0.7);
             padding: 8px 0;
             transition: color 0.3s;
         }
@@ -139,20 +165,28 @@
         .light-toggle {
             width: 40px; height: 40px;
             display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(45, 50, 47, 0.2);
+            border: 1px solid rgba(var(--ink-rgb), 0.2);
             border-radius: 50%;
-            color: rgba(45, 50, 47, 0.7);
+            color: rgba(var(--ink-rgb), 0.7);
             transition: all 0.4s var(--ease);
         }
         .light-toggle svg { transition: transform 0.7s var(--ease); }
         .light-toggle:hover { border-color: var(--accent); color: var(--accent); }
         .light-toggle:hover svg { transform: rotate(90deg); }
-        .light-toggle[aria-pressed="true"] { background: var(--charcoal); border-color: var(--charcoal); color: #fff; }
+        .light-toggle[aria-pressed="true"] {
+            background: var(--btn-primary-bg);
+            border-color: var(--btn-primary-bg);
+            color: var(--btn-primary-ink);
+        }
 
-        /* Modo "galeria": luz do vídeo levemente reduzida */
-        html.dim .hero__media video,
-        html.dim .hero__media img { filter: brightness(0.88) saturate(0.96); }
-        .hero__media video, .hero__media img { transition: filter 0.8s var(--ease); }
+        /* Crossfade entre os vídeos claro/escuro na troca de tema */
+        .hero__media video, .hero__media img { transition: opacity 0.55s var(--ease); }
+        #hero-video-dark { opacity: 0; }
+        html.dark #hero-video-dark { opacity: 1; }
+        html.dark #hero-video { opacity: 0; }
+        /* se o vídeo escuro falhar, mantém o claro visível mesmo no tema escuro */
+        html.dark .hero.dark-video-failed #hero-video { opacity: 1; }
+        html.dark .hero.dark-video-failed #hero-video-dark { display: none; }
 
         /* ============================================================
            HERO — pista de rolagem + viewport fixo (pinned)
@@ -189,13 +223,27 @@
             .hero__media video,
             .hero__media img { object-fit: cover; object-position: var(--video-pos); }
         }
-        /* Feather lateral: dissolve a emenda entre o quadro e a página nas barras
-           claras laterais; o JS o revela só quando o vídeo está contido. */
-        .ov--feather {
-            background:
-                linear-gradient(90deg, var(--bg-main), rgba(246, 247, 245, 0) 11%),
-                linear-gradient(270deg, var(--bg-main), rgba(246, 247, 245, 0) 11%);
-            opacity: 0;
+        /* Feather de borda: quatro tiras que abraçam as bordas reais do vídeo
+           contido — posição/tamanho calculados em JS conforme a proporção da
+           tela e a escala do scroll. Solidas sobre a barra, dissolvem 130px
+           para dentro do quadro. */
+        .ov--feather { opacity: 0; }
+        .ov--feather .fe { position: absolute; }
+        .ov--feather .fe--left {
+            top: 0; bottom: 0; left: 0;
+            background: linear-gradient(90deg, var(--bg-main) calc(100% - 130px), rgba(var(--bg-rgb), 0));
+        }
+        .ov--feather .fe--right {
+            top: 0; bottom: 0; right: 0;
+            background: linear-gradient(270deg, var(--bg-main) calc(100% - 130px), rgba(var(--bg-rgb), 0));
+        }
+        .ov--feather .fe--top {
+            left: 0; right: 0; top: 0;
+            background: linear-gradient(180deg, var(--bg-main) calc(100% - 130px), rgba(var(--bg-rgb), 0));
+        }
+        .ov--feather .fe--bottom {
+            left: 0; right: 0; bottom: 0;
+            background: linear-gradient(0deg, var(--bg-main) calc(100% - 130px), rgba(var(--bg-rgb), 0));
         }
         .hero__fallback { display: none; }
         .hero.is-fallback .hero__fallback { display: block; }
@@ -205,19 +253,19 @@
         .ov { position: absolute; inset: 0; pointer-events: none; }
         .ov--left {
             background: linear-gradient(90deg,
-                rgba(246, 247, 245, 0.88) 0%,
-                rgba(246, 247, 245, 0.5) 30%,
-                rgba(246, 247, 245, 0) 58%);
+                rgba(var(--bg-rgb), 0.88) 0%,
+                rgba(var(--bg-rgb), 0.5) 30%,
+                rgba(var(--bg-rgb), 0) 58%);
         }
         .ov--top {
             background: linear-gradient(180deg,
-                rgba(246, 247, 245, 0.55) 0%,
-                rgba(246, 247, 245, 0) 18%);
+                rgba(var(--bg-rgb), 0.55) 0%,
+                rgba(var(--bg-rgb), 0) 18%);
         }
         .ov--bottom {
             background: linear-gradient(0deg,
-                rgba(246, 247, 245, 0.45) 0%,
-                rgba(246, 247, 245, 0) 16%);
+                rgba(var(--bg-rgb), 0.45) 0%,
+                rgba(var(--bg-rgb), 0) 16%);
         }
         .ov--vignette {
             opacity: 0.3;
@@ -241,7 +289,7 @@
         }
         .hero__veil-bar {
             width: 120px; height: 1px;
-            background: rgba(45, 50, 47, 0.15);
+            background: rgba(var(--ink-rgb), 0.15);
             position: relative; overflow: hidden;
         }
         .hero__veil-bar::after {
@@ -257,7 +305,7 @@
         .hero__veil-label {
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em;
-            color: rgba(45, 50, 47, 0.45);
+            color: rgba(var(--ink-rgb), 0.45);
         }
 
         /* ============================================================
@@ -281,11 +329,11 @@
             /* fill backwards: ao terminar, libera o transform para o parallax */
             animation: rise 1s var(--ease) 0.55s backwards;
         }
-        .eyebrow__line { width: 40px; height: 1px; background: rgba(63, 85, 107, 0.7); }
+        .eyebrow__line { width: 40px; height: 1px; background: rgba(var(--accent-rgb), 0.7); }
         .eyebrow__text {
             font-size: 11px; font-weight: 600;
             text-transform: uppercase; letter-spacing: 0.28em;
-            color: rgba(45, 50, 47, 0.65);
+            color: rgba(var(--ink-rgb), 0.65);
         }
 
         .headline {
@@ -321,7 +369,7 @@
             font-size: clamp(0.95rem, 1.15vw, 1.0625rem);
             font-weight: 400;
             line-height: 1.65;
-            color: rgba(45, 50, 47, 0.75);
+            color: rgba(var(--ink-rgb), 0.75);
             animation: rise 1s var(--ease) 0.95s backwards;
         }
         .subcopy em {
@@ -352,7 +400,7 @@
 
         /* Primário sólido com varredura de luz (beam) */
         .btn--primary {
-            background: var(--charcoal); color: #fff;
+            background: var(--btn-primary-bg); color: var(--btn-primary-ink);
             overflow: hidden;
         }
         .btn--primary::before {
@@ -366,9 +414,9 @@
 
         /* Secundário em contorno */
         .btn--ghost {
-            border: 1px solid rgba(45, 50, 47, 0.85);
+            border: 1px solid rgba(var(--ink-rgb), 0.85);
             color: var(--ink);
-            background: rgba(246, 247, 245, 0.35);
+            background: rgba(var(--bg-rgb), 0.35);
             backdrop-filter: blur(6px);
         }
         .btn--ghost:hover {
@@ -397,42 +445,42 @@
         .rail__fig {
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em;
-            color: rgba(45, 50, 47, 0.55);
+            color: rgba(var(--ink-rgb), 0.55);
             line-height: 2;
         }
         .rail__fig::after {
             content: ''; display: block;
             width: 56px; height: 1px;
             margin: 10px 0 0 auto;
-            background: rgba(45, 50, 47, 0.3);
+            background: rgba(var(--ink-rgb), 0.3);
         }
         .rail__scene {
             font-family: 'Oswald', sans-serif;
             font-weight: 600; line-height: 0.85;
             font-size: clamp(3rem, 4.5vw, 4.5rem);
             color: transparent;
-            -webkit-text-stroke: 1.5px rgba(45, 50, 47, 0.75);
+            -webkit-text-stroke: 1.5px rgba(var(--ink-rgb), 0.75);
         }
         .rail__scene small {
             display: block;
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             -webkit-text-stroke: 0;
-            color: rgba(45, 50, 47, 0.5);
+            color: rgba(var(--ink-rgb), 0.5);
             font-size: 10px; font-weight: 400;
             letter-spacing: 0.25em; text-transform: uppercase;
             margin-top: 12px;
         }
-        .rail__arrow { color: rgba(45, 50, 47, 0.6); }
+        .rail__arrow { color: rgba(var(--ink-rgb), 0.6); }
         .rail__coords {
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 10px; letter-spacing: 0.18em;
-            color: rgba(45, 50, 47, 0.5);
+            color: rgba(var(--ink-rgb), 0.5);
             line-height: 1.9;
         }
         .rail__track {
             width: 1px; height: 86px;
             margin-left: auto;
-            background: rgba(45, 50, 47, 0.18);
+            background: rgba(var(--ink-rgb), 0.18);
             position: relative;
         }
         .rail__track-fill {
@@ -451,7 +499,7 @@
         .bottom__id {
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em;
-            color: rgba(45, 50, 47, 0.55);
+            color: rgba(var(--ink-rgb), 0.55);
         }
         .scroll-hint {
             display: flex; flex-direction: column; align-items: center; gap: 12px;
@@ -459,11 +507,11 @@
         .scroll-hint__label {
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; text-indent: 0.3em;
-            color: rgba(45, 50, 47, 0.55);
+            color: rgba(var(--ink-rgb), 0.55);
         }
         .scroll-hint__line {
             width: 1px; height: 34px;
-            background: rgba(45, 50, 47, 0.2);
+            background: rgba(var(--ink-rgb), 0.2);
             position: relative; overflow: hidden;
         }
         .scroll-hint__line::after {
@@ -479,7 +527,7 @@
         .bottom__tc {
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 10px; letter-spacing: 0.2em;
-            color: rgba(45, 50, 47, 0.55);
+            color: rgba(var(--ink-rgb), 0.55);
             display: flex; align-items: center; gap: 8px;
         }
         .bottom__tc::before {
@@ -521,7 +569,7 @@
             transform: rotate(180deg);
             font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 10px; text-transform: uppercase; letter-spacing: 0.32em;
-            color: rgba(45, 50, 47, 0.55);
+            color: rgba(var(--ink-rgb), 0.55);
         }
 
         /* --- Marca vertical lateral (lê de baixo para cima) --- */
@@ -566,9 +614,9 @@
             .btn { padding: 16px 24px; flex: 1; justify-content: center; }
             .ov--left {
                 background: linear-gradient(0deg,
-                    rgba(246, 247, 245, 0.92) 0%,
-                    rgba(246, 247, 245, 0.55) 38%,
-                    rgba(246, 247, 245, 0) 68%);
+                    rgba(var(--bg-rgb), 0.92) 0%,
+                    rgba(var(--bg-rgb), 0.55) 38%,
+                    rgba(var(--bg-rgb), 0) 68%);
             }
             .hero__bottom { bottom: 22px; }
             .bottom__tc { display: none; }
@@ -596,6 +644,11 @@
 
 <body>
 
+    <!-- Aplica o tema salvo antes do primeiro paint (evita flash) -->
+    <script>
+        try { if (localStorage.getItem('ariete-theme') === 'dark') document.documentElement.classList.add('dark'); } catch (e) { }
+    </script>
+
     <div class="grain" aria-hidden="true"></div>
     <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
 
@@ -606,7 +659,7 @@
         <a class="brand" href="#" aria-label="ARIETE — início">
             <svg class="brand__mark" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <rect x="8" y="0.8" width="10.2" height="10.2" transform="rotate(45 8 0.8)" stroke="#3F556B" stroke-width="1.4" />
-                <circle cx="8" cy="8" r="1.6" fill="#2d322f" />
+                <circle cx="8" cy="8" r="1.6" fill="currentColor" />
             </svg>
             <span class="brand__name">Ariete</span>
             <span class="brand__chip">Drop 01</span>
@@ -618,7 +671,7 @@
             <a href="#beneficios">Benefícios</a>
         </nav>
 
-        <button class="light-toggle" id="light-toggle" aria-pressed="false" aria-label="Alternar luz do estúdio" title="Luz do estúdio">
+        <button class="light-toggle" id="light-toggle" aria-pressed="false" aria-label="Alternar modo escuro" title="Modo escuro">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
                 <circle cx="7.5" cy="7.5" r="4.5" stroke="currentColor" stroke-width="1.3" />
                 <path d="M7.5 3 A4.5 4.5 0 0 1 7.5 12 Z" fill="currentColor" />
@@ -639,10 +692,15 @@
                     <div class="hero__media-inner" id="media-inner">
                         <video id="hero-video" muted playsinline preload="auto">
                             <!-- versão otimizada para scrub: 1920px, intra-only (todo frame é keyframe) -->
-                            <source src="assets/video-chapeu-rosa-scrub.mp4" type="video/mp4" />
+                            <source src="assets/raw_files/video-chapeu-rosa-scrub.mp4" type="video/mp4" />
                             <source src="assets/raw_files/video-chapeu-rosa-e-gato-bonito.mp4" type="video/mp4" />
                             <!-- fallback: vídeo ao lado do index.html -->
                             <source src="video-chapeu-rosa-e-gato-bonito.mp4" type="video/mp4" />
+                        </video>
+                        <!-- variante do modo escuro: mesmo tratamento intra-only -->
+                        <video id="hero-video-dark" muted playsinline preload="auto" aria-hidden="true">
+                            <source src="assets/raw_files/video-chapeu-preto-scrub.mp4" type="video/mp4" />
+                            <source src="assets/raw_files/video-chapeu-rosa-e-bonito-preto.mp4" type="video/mp4" />
                         </video>
                         <img class="hero__fallback" src="assets/raw_files/chapeu-rosa-ariete-bonito.png" alt="Boné rosa Ariete" />
                     </div>
@@ -650,7 +708,12 @@
                     <div class="ov ov--top"></div>
                     <div class="ov ov--bottom"></div>
                     <div class="ov ov--vignette" id="ov-vignette"></div>
-                    <div class="ov ov--feather" id="ov-feather"></div>
+                    <div class="ov ov--feather" id="ov-feather">
+                        <span class="fe fe--left"></span>
+                        <span class="fe fe--right"></span>
+                        <span class="fe fe--top"></span>
+                        <span class="fe fe--bottom"></span>
+                    </div>
                 </div>
 
                 <!-- Marca vertical na lateral esquerda — vazada, preenche no hover -->
@@ -759,6 +822,7 @@
             const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             const hero = document.getElementById('hero');
             const video = document.getElementById('hero-video');
+            const videoDark = document.getElementById('hero-video-dark');
             const veil = document.getElementById('hero-veil');
             const timecodeEl = document.getElementById('timecode');
             const railFill = document.getElementById('rail-fill');
@@ -767,6 +831,48 @@
             const ovFeather = document.getElementById('ov-feather');
             const sideBrand = document.getElementById('side-brand');
             const hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
+
+            /* ------------------------------------------------------------
+               Tema claro/escuro — cada tema tem seu vídeo (mesmo corte,
+               estúdio branco/preto), trocados com crossfade e sincronizados
+               no mesmo ponto da timeline.
+               ------------------------------------------------------------ */
+            const isDark = () => document.documentElement.classList.contains('dark');
+            const activeVideo = () =>
+                (isDark() && videoDark && !videoDark.error && !hero.classList.contains('dark-video-failed'))
+                    ? videoDark : video;
+
+            const lightToggle = document.getElementById('light-toggle');
+            lightToggle.setAttribute('aria-pressed', String(isDark()));
+
+            function setTheme(dark) {
+                const from = activeVideo();
+                document.documentElement.classList.toggle('dark', dark);
+                const to = activeVideo();
+                // sincroniza o novo vídeo no mesmo instante antes do crossfade
+                if (to !== from && to.readyState >= 1) {
+                    const d = to.duration || 8;
+                    try { to.currentTime = Math.min(from.currentTime || 0, d - 0.05); } catch (e) { }
+                }
+                lightToggle.setAttribute('aria-pressed', String(dark));
+                try { localStorage.setItem('ariete-theme', dark ? 'dark' : 'light'); } catch (e) { }
+                // em movimento reduzido, o vídeo ativo roda em loop e o outro pausa
+                if (reduceMotion) {
+                    [video, videoDark].forEach((v) => {
+                        if (!v) return;
+                        v.loop = v === to;
+                        if (v === to) v.play().catch(() => { });
+                        else v.pause();
+                    });
+                }
+            }
+            lightToggle.addEventListener('click', () => setTheme(!isDark()));
+            if (videoDark) {
+                const darkSources = videoDark.querySelectorAll('source');
+                darkSources[darkSources.length - 1].addEventListener('error', () => {
+                    hero.classList.add('dark-video-failed');
+                });
+            }
 
             /* ------------------------------------------------------------
                Envelope de escala do vídeo (compartilhado GSAP + fallback).
@@ -783,15 +889,20 @@
             const SHIFT_FRAC = 0.06; // deslocamento à direita só na abertura
             const SHIFT_END = 0.26;
             const desktopMQ = window.matchMedia('(min-width: 701px)');
+            const feLeft = ovFeather.querySelector('.fe--left');
+            const feRight = ovFeather.querySelector('.fe--right');
+            const feTop = ovFeather.querySelector('.fe--top');
+            const feBottom = ovFeather.querySelector('.fe--bottom');
 
             // escala mínima para o quadro contido cobrir a viewport inteira
             let coverScale = 16 / 9;
+            let vidRatio = 16 / 9;
             let maxScroll = 1;
             function recomputeMetrics() {
-                const rv = (video.videoWidth && video.videoHeight)
+                vidRatio = (video.videoWidth && video.videoHeight)
                     ? video.videoWidth / video.videoHeight : 16 / 9;
                 const rw = window.innerWidth / window.innerHeight;
-                coverScale = Math.max(rw / rv, rv / rw) * 1.04;
+                coverScale = Math.max(rw / vidRatio, vidRatio / rw) * 1.04;
                 maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
             }
             recomputeMetrics();
@@ -808,6 +919,7 @@
             function applyVideo(p) {
                 if (!desktopMQ.matches) {
                     video.style.transform = '';
+                    if (videoDark) videoDark.style.transform = '';
                     fallbackImg.style.transform = '';
                     ovFeather.style.opacity = '0';
                     return;
@@ -817,8 +929,22 @@
                 const tx = window.innerWidth * SHIFT_FRAC * (1 - smooth(clamp01(p / SHIFT_END)));
                 const tf = 'translateX(' + tx.toFixed(2) + 'px) scale(' + s.toFixed(4) + ')';
                 video.style.transform = tf;
+                if (videoDark) videoDark.style.transform = tf;
                 fallbackImg.style.transform = tf;
                 ovFeather.style.opacity = (1 - env).toFixed(3);
+
+                // tiras de feather abraçando as bordas reais do quadro contido
+                const vw = window.innerWidth, vh = window.innerHeight;
+                const dw = Math.min(vw, vh * vidRatio), dh = dw / vidRatio;
+                const F = 130; // alcance do fade para dentro do quadro
+                const left = vw / 2 + tx - (dw * s) / 2;
+                const right = vw / 2 + tx + (dw * s) / 2;
+                const top = vh / 2 - (dh * s) / 2;
+                const bottom = vh / 2 + (dh * s) / 2;
+                feLeft.style.width = (left > 1 ? left + F : 0) + 'px';
+                feRight.style.width = (vw - right > 1 ? (vw - right) + F : 0) + 'px';
+                feTop.style.height = (top > 1 ? top + F : 0) + 'px';
+                feBottom.style.height = (vh - bottom > 1 ? (vh - bottom) + F : 0) + 'px';
             }
 
             /* ------------------------------------------------------------
@@ -832,10 +958,14 @@
                 hero.classList.add('is-ready');
             }
 
-            video.addEventListener('loadeddata', markReady);
-            video.addEventListener('canplay', markReady);
+            const checkReady = () => { if (activeVideo().readyState >= 2) markReady(); };
+            [video, videoDark].forEach((v) => {
+                if (!v) return;
+                v.addEventListener('loadeddata', checkReady);
+                v.addEventListener('canplay', checkReady);
+            });
             // metadados já em cache (recargas)
-            if (video.readyState >= 2) markReady();
+            checkReady();
 
             function showFallback() {
                 hero.classList.add('is-fallback', 'is-ready');
@@ -852,11 +982,11 @@
                Movimento reduzido: hero estática, vídeo em loop suave
                ------------------------------------------------------------ */
             if (reduceMotion) {
-                video.loop = true;
-                video.autoplay = true;
-                const tryPlay = () => video.play().catch(() => { /* mantém primeiro frame */ });
-                if (video.readyState >= 2) tryPlay();
-                else video.addEventListener('canplay', tryPlay, { once: true });
+                const av = activeVideo();
+                av.loop = true;
+                const tryPlay = () => av.play().catch(() => { /* mantém primeiro frame */ });
+                if (av.readyState >= 2) tryPlay();
+                else av.addEventListener('canplay', tryPlay, { once: true });
                 return;
             }
 
@@ -886,11 +1016,13 @@
                 displayP += (targetP - displayP) * (1 - Math.pow(0.0001, dt));
                 if (Math.abs(targetP - displayP) < 0.0004) displayP = targetP;
 
-                const dur = video.duration;
-                if (!hero.classList.contains('is-fallback') && dur && video.readyState >= 2 && !video.seeking) {
+                // scrub no vídeo do tema ativo (claro ou escuro)
+                const av = activeVideo();
+                const dur = av.duration;
+                if (!hero.classList.contains('is-fallback') && dur && av.readyState >= 2 && !av.seeking) {
                     const t = Math.min(displayP, 0.9995) * dur;
                     // limiar = 1 frame a 30fps: evita seeks redundantes no mesmo frame
-                    if (Math.abs(video.currentTime - t) > 0.033) video.currentTime = t;
+                    if (Math.abs(av.currentTime - t) > 0.033) av.currentTime = t;
                 }
                 if (timecodeEl && dur) timecodeEl.textContent = formatTimecode(displayP * dur);
                 if (railFill) railFill.style.height = (displayP * 100) + '%';
@@ -1007,14 +1139,6 @@
                 onScroll();
             }
 
-            /* ------------------------------------------------------------
-               Toggle de luz do estúdio (detalhe de interface, topo direito)
-               ------------------------------------------------------------ */
-            const lightToggle = document.getElementById('light-toggle');
-            lightToggle.addEventListener('click', () => {
-                const dimmed = document.documentElement.classList.toggle('dim');
-                lightToggle.setAttribute('aria-pressed', String(dimmed));
-            });
         })();
     </script>
 </body>
