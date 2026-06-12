@@ -18,16 +18,16 @@
          ============================================================ -->
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="templates/aex.aura.build/assets/css2_2833f877a31c.css" rel="stylesheet" />
+    <link href="aex.aura.build/assets/css2_2833f877a31c.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet" />
 
     <!-- css: stack tipográfica (.font-display / .font-accent) + keyframe animationIn — mesmo arquivo do AEX -->
-    <link rel="stylesheet" href="templates/aex.aura.build/assets/css/typography.css" />
+    <link rel="stylesheet" href="aex.aura.build/assets/css/typography.css" />
 
     <!-- head js: Tailwind runtime (mesmo resource_3fa48481346f dos templates; precisa rodar antes do body) -->
-    <script src="templates/digital-architect.aura.build/assets/resource_3fa48481346f.js"></script>
+    <script src="digital-architect.aura.build/assets/resource_3fa48481346f.js"></script>
     <!-- js: Iconify web component (renderiza <iconify-icon>) — mesmo runtime do AEX -->
-    <script src="templates/aex.aura.build/assets/iconify-icon_feb921ce70a3.js"></script>
+    <script src="aex.aura.build/assets/iconify-icon_feb921ce70a3.js"></script>
 
     <style>
         /* ============================================================
@@ -87,7 +87,7 @@
         .text-outline-white:hover { color: rgba(255, 255, 255, 0.92); }
         /* Letras vazadas: a fotografia alpina atravessa o glifo */
         .text-image-clip {
-            background-image: url('templates/aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg');
+            background-image: url('aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg');
             background-size: cover;
             background-position: center 28%;
             -webkit-background-clip: text;
@@ -414,7 +414,7 @@
         <section class="relative w-full min-h-[94vh] pt-16 lg:pt-20 overflow-hidden grid-bg" id="hero">
             <!-- Fundo: foto alpina lavada de branco (AEX) -->
             <div class="absolute inset-0 z-0 pointer-events-none">
-                <img alt="" class="w-full h-full object-cover grayscale opacity-100 scale-[1.06]" src="templates/aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg" />
+                <img alt="" class="w-full h-full object-cover grayscale opacity-100 scale-[1.06]" src="aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg" />
                 <div class="absolute inset-0 bg-[#f6f7f5]/75"></div>
                 <div class="absolute inset-0 bg-gradient-to-r from-[#f6f7f5]/85 via-transparent to-[#f6f7f5]/65"></div>
                 <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#f6f7f5] to-transparent"></div>
@@ -485,7 +485,7 @@
                         <div class="mt-8 flex items-center gap-4 reveal delay-700 hero-badge glass-panel-light p-4 rounded-xl shadow-lg max-w-md glow-on-hover">
                             <div class="relative w-24 h-24 rounded-lg overflow-hidden shrink-0 border border-white/40">
                                 <video autoplay loop muted playsinline class="w-full h-full object-cover">
-                                    <source src="raw_files/video-chapeu-rosa-e-gato-bonito.mp4" type="video/mp4">
+                                    <source src="../media/video-chapeu-rosa-e-gato-bonito.mp4" type="video/mp4">
                                 </video>
                                 <div class="absolute inset-0 bg-black/10"></div>
                             </div>
@@ -500,19 +500,19 @@
                     <!-- Persianas parallax (js-hero-blind / parallax.js do AEX) -->
                     <div class="w-full lg:w-[46%] h-[420px] lg:h-[660px] flex items-center gap-1 lg:gap-1.5 overflow-visible relative group order-1 lg:order-2 [animation:animationIn_1.2s_ease-out_0.4s_both]">
                         <div class="w-[18%] h-[80%] -translate-y-4 relative overflow-hidden bg-[#1e2420] shadow-lg z-10 rounded-[1px]">
-                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('templates/aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 0% 50%;"></div>
+                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 0% 50%;"></div>
                         </div>
                         <div class="w-[22%] h-[95%] translate-y-1 relative overflow-hidden bg-[#1e2420] shadow-xl z-20 rounded-[1px]">
-                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('templates/aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 25% 50%;"></div>
+                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 25% 50%;"></div>
                         </div>
                         <div class="w-[28%] h-[110%] -translate-y-2 relative overflow-hidden bg-[#1e2420] shadow-2xl z-30 rounded-[1px]">
-                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('templates/aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 50% 50%;"></div>
+                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 50% 50%;"></div>
                         </div>
                         <div class="w-[22%] h-[95%] translate-y-1 relative overflow-hidden bg-[#1e2420] shadow-xl z-20 rounded-[1px]">
-                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('templates/aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 75% 50%;"></div>
+                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 75% 50%;"></div>
                         </div>
                         <div class="w-[18%] h-[80%] -translate-y-4 relative overflow-hidden bg-[#1e2420] shadow-lg z-10 rounded-[1px]">
-                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('templates/aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 100% 50%;"></div>
+                            <div class="absolute inset-x-0 -top-[30%] h-[160%] scale-[1.15] bg-no-repeat bg-[url('aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg')] js-hero-blind will-change-transform" style="background-size: 500% 100%; background-position: 100% 50%;"></div>
                         </div>
 
                         <!-- HUD de vidro flutuando sobre as persianas -->
@@ -978,13 +978,13 @@
                         <button class="absolute top-4 right-4 text-[#2d322f]/30 hover:text-[#3F556B] z-10 transition-colors">
                             <iconify-icon height="24" icon="solar:heart-linear" width="24"></iconify-icon>
                         </button>
-                        <img alt="Chapéu Rosa Ariete" class="w-full h-full object-contain drop-shadow-xl transition-all duration-500 hover:scale-105" id="product-main-img" src="raw_files/chapeu-rosa-ariete-fundo-branco.png" />
+                        <img alt="Chapéu Rosa Ariete" class="w-full h-full object-contain drop-shadow-xl transition-all duration-500 hover:scale-105" id="product-main-img" src="../media/chapeu-rosa-ariete-fundo-branco.png" />
                         <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                            <button class="w-8 h-8 rounded border border-[#3F556B] bg-white p-0.5 transition-all" onclick="changeProductImage('raw_files/chapeu-rosa-ariete-fundo-branco.png', this)">
-                                <img class="w-full h-full object-cover rounded-[2px]" src="raw_files/chapeu-rosa-ariete-fundo-branco.png" />
+                            <button class="w-8 h-8 rounded border border-[#3F556B] bg-white p-0.5 transition-all" onclick="changeProductImage('../media/chapeu-rosa-ariete-fundo-branco.png', this)">
+                                <img class="w-full h-full object-cover rounded-[2px]" src="../media/chapeu-rosa-ariete-fundo-branco.png" />
                             </button>
-                            <button class="w-8 h-8 rounded border border-transparent hover:border-[#3F556B] bg-white p-0.5 transition-all" onclick="changeProductImage('raw_files/chapeu-rosa-ariete-bonito.png', this)">
-                                <img class="w-full h-full object-cover rounded-[2px]" src="raw_files/chapeu-rosa-ariete-bonito.png" />
+                            <button class="w-8 h-8 rounded border border-transparent hover:border-[#3F556B] bg-white p-0.5 transition-all" onclick="changeProductImage('../media/chapeu-rosa-ariete-bonito.png', this)">
+                                <img class="w-full h-full object-cover rounded-[2px]" src="../media/chapeu-rosa-ariete-bonito.png" />
                             </button>
                         </div>
                     </div>
@@ -1028,7 +1028,7 @@
 
                 <!-- Card setor (hover slide AEX) -->
                 <div class="relative group overflow-hidden cursor-pointer bg-[#2d322f] min-h-[420px] animate-on-scroll [animation:animationIn_0.8s_ease-out_0.4s_both]">
-                    <img alt="Setor Alpino" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="templates/aex.aura.build/assets/b2bd4dcc-aeba-42b1-a228-8e7aea_704cffea9a93.webp" />
+                    <img alt="Setor Alpino" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="aex.aura.build/assets/b2bd4dcc-aeba-42b1-a228-8e7aea_704cffea9a93.webp" />
                     <div class="absolute inset-0 bg-gradient-to-t from-[#1e2420]/80 to-transparent pointer-events-none"></div>
                     <div class="absolute bottom-0 left-0 p-8 z-20 pointer-events-none">
                         <span class="font-display text-xs text-white/70 uppercase tracking-[0.2em] mb-2 block drop-shadow-md">Card de Setor</span>
@@ -1092,7 +1092,7 @@
              ============================================================ -->
         <section class="relative h-[78vh] flex items-center justify-center overflow-hidden bg-[#1e2420]">
             <div class="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#3F556B]/60 to-transparent z-10 pointer-events-none"></div>
-            <img alt="Montanha em alta altitude" class="absolute inset-x-0 -top-[30%] w-full h-[160%] object-cover object-[center_30%] js-immersive-bg transition-transform duration-300 ease-out z-0 scale-[1.15] will-change-transform" src="templates/aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg" />
+            <img alt="Montanha em alta altitude" class="absolute inset-x-0 -top-[30%] w-full h-[160%] object-cover object-[center_30%] js-immersive-bg transition-transform duration-300 ease-out z-0 scale-[1.15] will-change-transform" src="aex.aura.build/assets/4024eb96-6b8f-4f13-99f1-f18894_c5e389f40d85.jpg" />
             <div class="absolute inset-0 bg-[#1e2420]/35 z-0 mix-blend-multiply pointer-events-none"></div>
             <h2 class="relative z-20 flex flex-col items-center text-center px-6">
                 <span class="font-display text-5xl md:text-8xl lg:text-[8.5rem] font-semibold uppercase tracking-tighter leading-[0.85] text-outline-white drop-shadow-2xl animate-on-scroll [animation:animationIn_1s_ease-out_0.1s_both]">O Branco</span>
@@ -1283,9 +1283,9 @@
                             <iconify-icon class="text-[#2d322f]/30" icon="solar:gallery-linear"></iconify-icon>
                         </div>
                         <div class="anim-stage relative h-24 border border-[#2d322f]/5 overflow-hidden" id="hero-carousel">
-                            <div class="carousel-slide active"><img class="w-full h-full object-cover grayscale" src="templates/digital-architect.aura.build/assets/c7fa69dd-d7fb-48f2-a866-ef3663_f6b789593f38.webp" /></div>
-                            <div class="carousel-slide"><img class="w-full h-full object-cover grayscale" src="templates/aex.aura.build/assets/photo-1682686581854-5e71f58e7e_67aa888c0d21.jpg" /></div>
-                            <div class="carousel-slide"><img class="w-full h-full object-cover grayscale" src="templates/aex.aura.build/assets/photo-1507534192483-69914c0692_d6506dd222d0.jpg" /></div>
+                            <div class="carousel-slide active"><img class="w-full h-full object-cover grayscale" src="digital-architect.aura.build/assets/c7fa69dd-d7fb-48f2-a866-ef3663_f6b789593f38.webp" /></div>
+                            <div class="carousel-slide"><img class="w-full h-full object-cover grayscale" src="aex.aura.build/assets/photo-1682686581854-5e71f58e7e_67aa888c0d21.jpg" /></div>
+                            <div class="carousel-slide"><img class="w-full h-full object-cover grayscale" src="aex.aura.build/assets/photo-1507534192483-69914c0692_d6506dd222d0.jpg" /></div>
                         </div>
                         <p class="text-xs text-[#2d322f]/60 mt-4 leading-relaxed">Crossfade 1.5s + zoom lento de 10s por slide (digital-architect). Troca a cada 5s.</p>
                     </div>
@@ -1374,9 +1374,9 @@
     </div>
 
     <!-- js: parallax cinemático (js-hero-blind + js-immersive-bg) — mesmo arquivo do AEX -->
-    <script src="templates/aex.aura.build/assets/js/parallax.js"></script>
+    <script src="aex.aura.build/assets/js/parallax.js"></script>
     <!-- js: gatilho de viewport para .animate-on-scroll — mesmo arquivo do AEX -->
-    <script src="templates/aex.aura.build/assets/js/scroll-reveal.js"></script>
+    <script src="aex.aura.build/assets/js/scroll-reveal.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
