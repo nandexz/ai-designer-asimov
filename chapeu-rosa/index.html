@@ -959,6 +959,40 @@
             grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
             gap: clamp(48px, 6vw, 96px);
             align-items: start;
+            position: relative;
+        }
+        /* traço HUD: liga a mira ativa ao conceito (recalculado em JS) */
+        .tech__link {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            overflow: visible; pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+            transition: opacity 0.5s var(--ease);
+        }
+        .tech__link.is-on { opacity: 1; }
+        #tech-link-path {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 1.6;
+            stroke-dasharray: 2 8;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 3px rgba(var(--accent-rgb), 0.5));
+            /* os pontos deslizam devagar da mira (início) para o card (fim) */
+            animation: techFlow 3.4s linear infinite;
+        }
+        /* traço sólido que cresce e revela o tracejado por baixo (desenho) */
+        #tech-link-mask-path { fill: none; stroke: #fff; stroke-width: 12; stroke-linecap: round; }
+        @keyframes techFlow { to { stroke-dashoffset: -40; } }
+        .tech__link circle {
+            fill: var(--accent);
+            transform-box: fill-box; transform-origin: center;
+            /* a chegada respira devagar, recebendo o fluxo */
+            animation: techPulse 3.4s ease-in-out infinite;
+        }
+        @keyframes techPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.28); opacity: 1; }
         }
 
         /* --- Palco: foto de estúdio com miras numeradas --- */
@@ -1555,6 +1589,7 @@
             .shop__stage { max-width: 600px; }
             .tech__grid { grid-template-columns: 1fr; gap: 48px; }
             .tech__stage { position: static; max-width: 640px; }
+            .tech__link { display: none; }
             .footer__top { grid-template-columns: 1fr; align-items: start; }
             .footer__mark { order: -1; }
             .atelier__grid { grid-template-columns: 1fr; gap: 48px; }
@@ -1622,6 +1657,7 @@
             .tech__orb { animation: none; }
             .hs::before { animation: none; opacity: 0; }
             .stock__fill { transition: none; }
+            .tech__link path, .tech__link circle { animation: none; }
         }
     </style>
 </head>
@@ -1932,6 +1968,17 @@
                 </header>
 
                 <div class="tech__grid">
+                    <!-- Traço HUD ligando a mira ativa ao conceito travado -->
+                    <svg class="tech__link" id="tech-link" aria-hidden="true">
+                        <defs>
+                            <mask id="tech-link-mask" maskUnits="userSpaceOnUse" x="-60" y="-60" width="3000" height="3000">
+                                <path id="tech-link-mask-path" d="" />
+                            </mask>
+                        </defs>
+                        <path id="tech-link-path" d="" mask="url(#tech-link-mask)" />
+                        <circle id="tech-link-end" r="3" cx="-20" cy="-20" />
+                    </svg>
+
                     <!-- Palco: foto com miras numeradas -->
                     <div class="tech__stage reveal delay-150">
                         <div class="tech__plate">
@@ -2471,15 +2518,108 @@
                 const spots = Array.from(tech.querySelectorAll('.hs'));
                 const items = Array.from(tech.querySelectorAll('.tech-item'));
 
-                function setTechActive(idx) {
+                const techGrid = tech.querySelector('.tech__grid');
+                const linkSvg = document.getElementById('tech-link');
+                const linkPath = document.getElementById('tech-link-path');
+                const linkMaskPath = document.getElementById('tech-link-mask-path');
+                const linkEnd = document.getElementById('tech-link-end');
+                let lockedIdx = '1';        // conceito travado por clique
+                let lockedFromSpot = true;  // origem da trava (mira ou conceito)
+                let shownIdx = '1';         // o que está visível agora
+                let revealAnim = null;
+
+                // (re)posiciona o traço; retorna false se não há linha (mobile)
+                function drawLink(idx) {
+                    const spot = spots.find((s) => s.dataset.idx === idx);
+                    const item = items.find((i) => i.dataset.idx === idx);
+                    const base = linkSvg.getBoundingClientRect();
+                    // largura 0 = .tech__link em display:none (mobile/empilhado)
+                    if (!spot || !item || base.width === 0) { linkSvg.classList.remove('is-on'); return false; }
+                    const a = spot.getBoundingClientRect();
+                    const b = item.getBoundingClientRect();
+                    const x1 = a.left + a.width / 2 - base.left;
+                    const y1 = a.top + a.height / 2 - base.top;
+                    const x2 = b.left - base.left;
+                    const y2 = b.top + b.height / 2 - base.top;
+                    const cx = x1 + (x2 - x1) * 0.5;
+                    const dStr = 'M ' + x1.toFixed(1) + ' ' + y1.toFixed(1) +
+                        ' C ' + cx.toFixed(1) + ' ' + y1.toFixed(1) + ', ' +
+                        cx.toFixed(1) + ' ' + y2.toFixed(1) + ', ' +
+                        x2.toFixed(1) + ' ' + y2.toFixed(1);
+                    linkPath.setAttribute('d', dStr);
+                    linkMaskPath.setAttribute('d', dStr);   // a máscara acompanha o traço
+                    linkEnd.setAttribute('cx', x2.toFixed(1));
+                    linkEnd.setAttribute('cy', y2.toFixed(1));
+                    linkSvg.classList.add('is-on');
+                    return true;
+                }
+
+                // desenha o traço progressivamente, na direção do elemento apontado:
+                // fromSpot=true  → cresce da mira para o conceito (bolinha → card)
+                // fromSpot=false → cresce do conceito para a mira (card → bolinha)
+                function revealLink(idx, fromSpot) {
+                    if (!drawLink(idx)) return;
+                    if (revealAnim) revealAnim.cancel();
+                    // máscara sólida = revela a linha inteira (estado de repouso)
+                    if (reduceMotion) { linkMaskPath.style.strokeDasharray = ''; linkMaskPath.style.strokeDashoffset = ''; return; }
+                    const L = linkMaskPath.getTotalLength();
+                    // a máscara (traço sólido) cresce e revela o tracejado por baixo.
+                    // O path visível segue sempre pontilhado com os pontos fluindo.
+                    linkMaskPath.style.strokeDasharray = L;
+                    revealAnim = linkMaskPath.animate(
+                        [{ strokeDashoffset: fromSpot ? L : -L }, { strokeDashoffset: 0 }],
+                        { duration: 1500, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' }
+                    );
+                    revealAnim.onfinish = () => {
+                        // máscara totalmente aberta — revela o traço inteiro
+                        linkMaskPath.style.strokeDasharray = '';
+                        linkMaskPath.style.strokeDashoffset = '';
+                    };
+                }
+
+                function setTechActive(idx, fromSpot) {
+                    shownIdx = idx;
                     spots.forEach((s) => s.classList.toggle('is-active', s.dataset.idx === idx));
                     items.forEach((it) => it.classList.toggle('is-active', it.dataset.idx === idx));
+                    revealLink(idx, fromSpot);
                 }
-                [...spots, ...items].forEach((el) => {
-                    el.addEventListener('mouseenter', () => setTechActive(el.dataset.idx));
-                    el.addEventListener('focus', () => setTechActive(el.dataset.idx));
-                    el.addEventListener('click', () => setTechActive(el.dataset.idx));
+
+                // clique trava (guardando a direção); hover pré-visualiza; sair restaura.
+                // .hs = mira (fromSpot true) · .tech-item = conceito (fromSpot false)
+                spots.forEach((el) => {
+                    el.addEventListener('mouseenter', () => setTechActive(el.dataset.idx, true));
+                    el.addEventListener('focus', () => setTechActive(el.dataset.idx, true));
+                    el.addEventListener('click', () => { lockedIdx = el.dataset.idx; lockedFromSpot = true; setTechActive(lockedIdx, true); });
                 });
+                items.forEach((el) => {
+                    el.addEventListener('mouseenter', () => setTechActive(el.dataset.idx, false));
+                    el.addEventListener('focus', () => setTechActive(el.dataset.idx, false));
+                    el.addEventListener('click', () => { lockedIdx = el.dataset.idx; lockedFromSpot = false; setTechActive(lockedIdx, false); });
+                });
+                techGrid.addEventListener('mouseleave', () => setTechActive(lockedIdx, lockedFromSpot));
+
+                // o palco é sticky → reposiciona o traço enquanto a cena se move
+                // (só reposiciona, sem re-desenhar a animação de entrada)
+                let techVisible = false, linkRaf = null, firstReveal = true;
+                function scheduleLink() {
+                    if (linkRaf || !techVisible) return;
+                    linkRaf = requestAnimationFrame(() => { linkRaf = null; drawLink(shownIdx); });
+                }
+                window.addEventListener('scroll', scheduleLink, { passive: true });
+                window.addEventListener('resize', scheduleLink);
+                const techPlateImg = tech.querySelector('.tech__plate img');
+                if (techPlateImg && !techPlateImg.complete) {
+                    techPlateImg.addEventListener('load', () => drawLink(shownIdx));
+                }
+                new IntersectionObserver((ents) => {
+                    ents.forEach((e) => {
+                        techVisible = e.isIntersecting;
+                        if (!e.isIntersecting) return;
+                        // primeira vez em cena: desenha com animação; depois só reposiciona
+                        if (firstReveal) { firstReveal = false; revealLink(shownIdx, lockedFromSpot); }
+                        else drawLink(shownIdx);
+                    });
+                }, { threshold: 0 }).observe(tech);
 
                 // lanterna: o brilho radial segue o cursor (só ponteiro fino)
                 if (window.matchMedia('(pointer: fine)').matches) {
