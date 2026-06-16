@@ -1,0 +1,23 @@
+body {
+  font-family: 'Inter', sans-serif;
+}
+.font-display {
+  font-family: 'Oswald', sans-serif;
+}
+.font-accent {
+  font-family: 'Playfair Display', serif;
+}
+/* Custom scrollbar for a more tactical feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #ebedea;
+}
+::-webkit-scrollbar-thumb {
+  background: #3F556B;
+}
+@keyframes animationIn {
+  0% { opacity: 0; transform: translateY(30px); filter: blur(8px); }
+  100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}

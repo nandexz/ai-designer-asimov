@@ -1,0 +1,3006 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARIETE® — Drop 01 · O boné mais icônico</title>
+    <meta name="description" content="ARIETE Drop 01 — série limitada. Design leve, presença marcante e acabamento pensado para quem transforma o cotidiano em assinatura." />
+
+    <!-- Tipografia do sistema: Oswald (display) · Inter (corpo) · Playfair Display italic (acento) -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ============================================================
+           TOKENS — consolidados de design_system_claude + design_system_fable
+           ============================================================ */
+        :root {
+            --bg-main: #f6f7f5;       /* Branco Geleira */
+            --bg-rgb: 246, 247, 245;
+            --bg-alt: #ebedea;        /* Base Alpina */
+            --ink: #2d322f;           /* Tinta Granito */
+            --ink-rgb: 45, 50, 47;
+            --accent: #3F556B;        /* Aço Glacial */
+            --accent-rgb: 63, 85, 107;
+            --charcoal: #1e2420;      /* Carvão Noturno */
+            --btn-primary-bg: #1e2420;
+            --btn-primary-ink: #ffffff;
+            --radius: 5px;            /* arredondamento discreto — só superfícies */
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --pad-x: clamp(24px, 5vw, 64px);
+            --video-pos: 50% 50%;
+        }
+
+        /* ============================================================
+           MODO ESCURO — calibrado no estúdio do vídeo preto (#2a–#3f)
+           ============================================================ */
+        html.dark {
+            --bg-main: #212624;
+            --bg-rgb: 33, 38, 36;
+            --bg-alt: #1a1e1c;
+            --ink: #edf0ee;
+            --ink-rgb: 237, 240, 238;
+            --accent: #8AA4BD;        /* Aço Glacial clareado p/ contraste */
+            --accent-rgb: 138, 164, 189;
+            --btn-primary-bg: #edf0ee;
+            --btn-primary-ink: #1a1d1b;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: auto; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+            color: var(--ink);
+            letter-spacing: -0.01em;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.6s var(--ease), color 0.6s var(--ease);
+        }
+
+        ::selection { background: var(--accent); color: #fff; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); }
+
+        .font-display { font-family: 'Oswald', sans-serif; }
+        .font-accent { font-family: 'Playfair Display', serif; font-style: italic; }
+        .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+        /* Lettering em contorno — assinatura do sistema.
+           No hover, o glifo vazado se preenche com a cor de acento. */
+        .text-outline {
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(var(--ink-rgb), 0.85);
+            transition: color 0.6s var(--ease), -webkit-text-stroke-color 0.6s var(--ease);
+        }
+        .text-outline:hover {
+            color: var(--accent);
+            -webkit-text-stroke-color: var(--accent);
+        }
+
+        a { color: inherit; text-decoration: none; }
+        button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+        /* Grão fotográfico global */
+        .grain {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 100;
+            opacity: 0.035; mix-blend-mode: multiply;
+            background-image: radial-gradient(rgba(var(--ink-rgb), 0.55) 1px, transparent 1px);
+            background-size: 3px 3px;
+        }
+        html.dark .grain {
+            mix-blend-mode: screen;
+            opacity: 0.05;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.45) 1px, transparent 1px);
+        }
+
+        /* Barra de progresso de leitura (topo) */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0;
+            height: 2px; width: 100%;
+            background: var(--accent);
+            transform: scaleX(0); transform-origin: left;
+            z-index: 110; pointer-events: none;
+        }
+
+        /* ============================================================
+           HEADER — sobreposto, discreto
+           ============================================================ */
+        .site-header {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 60;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px var(--pad-x);
+            animation: headerIn 1s var(--ease) 0.2s both;
+            transition: color 0.45s var(--ease);
+        }
+        /* modo claro + header sobre dobra escura → inverte para tipografia clara */
+        html:not(.dark) .site-header.is-over-dark { color: #edf0ee; }
+        html:not(.dark) .site-header.is-over-dark .brand__name { color: #edf0ee; }
+        html:not(.dark) .site-header.is-over-dark .brand__mark { color: #8AA4BD; }
+        html:not(.dark) .site-header.is-over-dark .brand__chip {
+            color: rgba(237, 240, 238, 0.65);
+            border-color: rgba(237, 240, 238, 0.28);
+        }
+        html:not(.dark) .site-header.is-over-dark .site-nav a {
+            color: rgba(237, 240, 238, 0.78);
+        }
+        html:not(.dark) .site-header.is-over-dark .site-nav a:hover { color: #8AA4BD; }
+        html:not(.dark) .site-header.is-over-dark .site-nav a::after { background: #8AA4BD; }
+        html:not(.dark) .site-header.is-over-dark .light-toggle {
+            border-color: rgba(237, 240, 238, 0.28);
+            color: rgba(237, 240, 238, 0.78);
+        }
+        html:not(.dark) .site-header.is-over-dark .light-toggle:hover {
+            border-color: #8AA4BD;
+            color: #8AA4BD;
+        }
+        @keyframes headerIn {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .brand__mark { display: block; color: var(--accent); transition: transform 0.7s var(--ease), color 0.45s var(--ease); }
+        .brand:hover .brand__mark { transform: rotate(180deg); }
+        .brand__name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.45rem; font-weight: 600;
+            letter-spacing: -0.02em; text-transform: uppercase;
+            line-height: 1;
+            transition: color 0.45s var(--ease);
+        }
+        .brand__chip {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;
+            color: rgba(var(--ink-rgb), 0.6);
+            border: 1px solid rgba(var(--ink-rgb), 0.2);
+            padding: 4px 8px;
+            transition: color 0.45s var(--ease), border-color 0.45s var(--ease);
+        }
+
+        .site-nav { display: flex; gap: 40px; }
+        .site-nav a {
+            position: relative;
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            color: rgba(var(--ink-rgb), 0.7);
+            padding: 8px 0;
+            transition: color 0.45s var(--ease);
+        }
+        .site-nav a::after {
+            content: ''; position: absolute;
+            bottom: 0; left: 50%;
+            width: 6px; height: 6px;
+            background: var(--accent); border-radius: 50%;
+            transform: translateX(-50%) scale(0);
+            transition: transform 0.3s var(--ease), background 0.45s var(--ease);
+        }
+        .site-nav a:hover { color: var(--accent); }
+        .site-nav a:hover::after { transform: translateX(-50%) scale(1); }
+
+        .light-toggle {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(var(--ink-rgb), 0.2);
+            border-radius: 50%;
+            color: rgba(var(--ink-rgb), 0.7);
+            transition: all 0.4s var(--ease);
+        }
+        .light-toggle svg { transition: transform 0.7s var(--ease); }
+        .light-toggle:hover { border-color: var(--accent); color: var(--accent); }
+        .light-toggle:hover svg { transform: rotate(90deg); }
+        .light-toggle[aria-pressed="true"] {
+            background: var(--btn-primary-bg);
+            border-color: var(--btn-primary-bg);
+            color: var(--btn-primary-ink);
+        }
+
+        /* Crossfade entre os vídeos claro/escuro na troca de tema */
+        .hero__media video, .hero__media img { transition: opacity 0.55s var(--ease); }
+        #hero-video-dark { opacity: 0; }
+        html.dark #hero-video-dark { opacity: 1; }
+        html.dark #hero-video { opacity: 0; }
+        /* se o vídeo escuro falhar, mantém o claro visível mesmo no tema escuro */
+        html.dark .hero.dark-video-failed #hero-video { opacity: 1; }
+        html.dark .hero.dark-video-failed #hero-video-dark { display: none; }
+
+        /* ============================================================
+           HERO — pista de rolagem + viewport fixo (pinned)
+           ============================================================ */
+        .hero {
+            position: relative;
+            height: 420vh; /* pista de scroll: controla o avanço do vídeo */
+        }
+
+        .hero__pin {
+            position: sticky; top: 0;
+            height: 100vh; height: 100svh;
+            overflow: hidden;
+        }
+
+        /* --- Camada de mídia: vídeo full-screen ---
+           object-fit: contain mantém o quadro inteiro (gato + boné) sempre
+           disponível; o JS amplia até cobrir a tela nos closes e recua para
+           contain nas pontas. Como o fundo de estúdio é branco e se funde com
+           a página, mesmo "contido" o vídeo lê como tela cheia. */
+        .hero__media { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+        .hero__media-inner { position: absolute; inset: 0; will-change: transform; }
+        .hero__media video,
+        .hero__media img {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: contain;
+            object-position: center center;
+            transform-origin: center center;
+            will-change: transform;
+        }
+        /* Em telas estreitas (mobile) o vídeo volta a cobrir a tela inteira. */
+        @media (max-width: 700px) {
+            .hero__media video,
+            .hero__media img { object-fit: cover; object-position: var(--video-pos); }
+        }
+        /* Feather de borda: quatro tiras que abraçam as bordas reais do vídeo
+           contido — posição/tamanho calculados em JS conforme a proporção da
+           tela e a escala do scroll. Solidas sobre a barra, dissolvem 130px
+           para dentro do quadro. */
+        .ov--feather { opacity: 0; }
+        .ov--feather .fe { position: absolute; }
+        .ov--feather .fe--left {
+            top: 0; bottom: 0; left: 0;
+            background: linear-gradient(90deg, var(--bg-main) calc(100% - 130px), rgba(var(--bg-rgb), 0));
+        }
+        .ov--feather .fe--right {
+            top: 0; bottom: 0; right: 0;
+            background: linear-gradient(270deg, var(--bg-main) calc(100% - 130px), rgba(var(--bg-rgb), 0));
+        }
+        .ov--feather .fe--top {
+            left: 0; right: 0; top: 0;
+            background: linear-gradient(180deg, var(--bg-main) calc(100% - 130px), rgba(var(--bg-rgb), 0));
+        }
+        .ov--feather .fe--bottom {
+            left: 0; right: 0; bottom: 0;
+            background: linear-gradient(0deg, var(--bg-main) calc(100% - 130px), rgba(var(--bg-rgb), 0));
+        }
+        .hero__fallback { display: none; }
+        .hero.is-fallback .hero__fallback { display: block; }
+        .hero.is-fallback video { display: none; }
+
+        /* Overlays de legibilidade — sutis, sem sujar o vídeo */
+        .ov { position: absolute; inset: 0; pointer-events: none; }
+        .ov--left {
+            background: linear-gradient(90deg,
+                rgba(var(--bg-rgb), 0.88) 0%,
+                rgba(var(--bg-rgb), 0.5) 30%,
+                rgba(var(--bg-rgb), 0) 58%);
+        }
+        .ov--top {
+            background: linear-gradient(180deg,
+                rgba(var(--bg-rgb), 0.55) 0%,
+                rgba(var(--bg-rgb), 0) 18%);
+        }
+        .ov--bottom {
+            background: linear-gradient(0deg,
+                rgba(var(--bg-rgb), 0.45) 0%,
+                rgba(var(--bg-rgb), 0) 16%);
+        }
+        .ov--vignette {
+            opacity: 0.3;
+            background: radial-gradient(120% 90% at 56% 45%, transparent 60%, rgba(30, 36, 32, 0.22) 100%);
+        }
+
+        /* --- Véu de carregamento --- */
+        .hero__veil {
+            position: absolute; inset: 0; z-index: 30;
+            background: var(--bg-main);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 20px;
+            transition: opacity 0.9s var(--ease), visibility 0.9s;
+        }
+        .hero.is-ready .hero__veil { opacity: 0; visibility: hidden; }
+        .hero__veil-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.6rem; font-weight: 600;
+            letter-spacing: 0.45em; text-indent: 0.45em;
+            text-transform: uppercase;
+        }
+        .hero__veil-bar {
+            width: 120px; height: 1px;
+            background: rgba(var(--ink-rgb), 0.15);
+            position: relative; overflow: hidden;
+        }
+        .hero__veil-bar::after {
+            content: ''; position: absolute; inset: 0;
+            background: var(--accent);
+            transform: translateX(-100%);
+            animation: veilSweep 1.6s var(--ease) infinite;
+        }
+        @keyframes veilSweep {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+        .hero__veil-label {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em;
+            color: rgba(var(--ink-rgb), 0.45);
+        }
+
+        /* ============================================================
+           CAMADA DE CONTEÚDO
+           ============================================================ */
+        .hero__layout {
+            position: absolute; inset: 0; z-index: 10;
+            display: flex; align-items: center;
+            padding: 0 var(--pad-x);
+        }
+
+        /* --- Coluna esquerda: lettering + CTAs --- */
+        .hero__copy {
+            max-width: 720px;
+            will-change: transform, opacity;
+        }
+
+        .eyebrow {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 36px;
+            /* fill backwards: ao terminar, libera o transform para o parallax */
+            animation: rise 1s var(--ease) 0.55s backwards;
+        }
+        .eyebrow__line { width: 40px; height: 1px; background: rgba(var(--accent-rgb), 0.7); }
+        .eyebrow__text {
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.28em;
+            color: rgba(var(--ink-rgb), 0.65);
+        }
+
+        .headline {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase;
+            font-size: clamp(3rem, 7.4vw, 6.75rem);
+            line-height: 0.88; letter-spacing: -0.04em;
+        }
+        /* A máscara precisa de respiro vertical: com leading 0.88, acentos e
+           descendentes ultrapassam a caixa da linha — o padding amplia a área
+           de clip e a margin negativa devolve o leading apertado. */
+        .headline .line {
+            display: block; overflow: hidden;
+            padding: 0.18em 0.06em;
+            margin: -0.18em -0.06em;
+        }
+        .headline .line > span {
+            display: block;
+            transform: translateY(145%);
+            animation: lineUp 1.3s var(--ease) both;
+        }
+        .headline .line:nth-child(1) > span { animation-delay: 0.45s; }
+        .headline .line:nth-child(2) > span { animation-delay: 0.58s; }
+        .headline .line:nth-child(3) > span { animation-delay: 0.71s; }
+        @keyframes lineUp {
+            to { transform: translateY(0); }
+        }
+        .headline .dot { color: var(--accent); -webkit-text-stroke: 0; }
+
+        .subcopy {
+            margin-top: 32px;
+            max-width: 42ch;
+            font-size: clamp(0.95rem, 1.15vw, 1.0625rem);
+            font-weight: 400;
+            line-height: 1.65;
+            color: rgba(var(--ink-rgb), 0.75);
+            animation: rise 1s var(--ease) 0.95s backwards;
+        }
+        .subcopy em {
+            font-family: 'Playfair Display', serif;
+            font-style: italic; font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 0;
+        }
+
+        /* --- Botões --- */
+        .hero__actions {
+            display: flex; align-items: center; flex-wrap: wrap; gap: 20px;
+            margin-top: 44px;
+            animation: rise 1s var(--ease) 1.1s backwards;
+        }
+
+        .btn {
+            position: relative;
+            display: inline-flex; align-items: center; gap: 12px;
+            padding: 17px 34px;
+            font-size: 11.5px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.22em; text-indent: 0.22em;
+            transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease);
+            will-change: transform;
+        }
+        .btn svg { transition: transform 0.3s var(--ease); }
+        .btn:hover svg { transform: translateX(4px); }
+
+        /* Primário sólido com varredura de luz (beam) */
+        .btn--primary {
+            background: var(--btn-primary-bg); color: var(--btn-primary-ink);
+            overflow: hidden;
+        }
+        .btn--primary::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+            transition: left 0.55s ease;
+        }
+        .btn--primary:hover { background: var(--accent); }
+        .btn--primary:hover::before { left: 100%; }
+
+        /* Secundário em contorno */
+        .btn--ghost {
+            border: 1px solid rgba(var(--ink-rgb), 0.85);
+            color: var(--ink);
+            background: rgba(var(--bg-rgb), 0.35);
+            backdrop-filter: blur(6px);
+        }
+        .btn--ghost:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(26px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Trilho direito: detalhes técnicos / editoriais --- */
+        .hero__rail {
+            position: absolute; top: 0; bottom: 0; right: var(--pad-x);
+            z-index: 10;
+            display: flex; flex-direction: column;
+            align-items: flex-end; justify-content: center;
+            gap: 40px;
+            padding: 120px 0 110px;
+            text-align: right;
+            will-change: transform;
+            animation: rise 1.2s var(--ease) 1.25s backwards;
+        }
+        .rail__fig {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em;
+            color: rgba(var(--ink-rgb), 0.55);
+            line-height: 2;
+        }
+        .rail__fig::after {
+            content: ''; display: block;
+            width: 56px; height: 1px;
+            margin: 10px 0 0 auto;
+            background: rgba(var(--ink-rgb), 0.3);
+        }
+        .rail__scene {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; line-height: 0.85;
+            font-size: clamp(3rem, 4.5vw, 4.5rem);
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(var(--ink-rgb), 0.75);
+        }
+        .rail__scene small {
+            display: block;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            -webkit-text-stroke: 0;
+            color: rgba(var(--ink-rgb), 0.5);
+            font-size: 10px; font-weight: 400;
+            letter-spacing: 0.25em; text-transform: uppercase;
+            margin-top: 12px;
+        }
+        .rail__arrow { color: rgba(var(--ink-rgb), 0.6); }
+        .rail__coords {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; letter-spacing: 0.18em;
+            color: rgba(var(--ink-rgb), 0.5);
+            line-height: 1.9;
+        }
+        .rail__track {
+            width: 1px; height: 86px;
+            margin-left: auto;
+            background: rgba(var(--ink-rgb), 0.18);
+            position: relative;
+        }
+        .rail__track-fill {
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 0%;
+            background: var(--accent);
+        }
+
+        /* --- Barra inferior: microtextos --- */
+        .hero__bottom {
+            position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: 30px;
+            z-index: 10;
+            display: flex; align-items: flex-end; justify-content: space-between;
+            animation: rise 1s var(--ease) 1.4s both;
+        }
+        .bottom__id {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em;
+            color: rgba(var(--ink-rgb), 0.55);
+        }
+        .scroll-hint {
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .scroll-hint__label {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.3em; text-indent: 0.3em;
+            color: rgba(var(--ink-rgb), 0.55);
+        }
+        .scroll-hint__line {
+            width: 1px; height: 34px;
+            background: rgba(var(--ink-rgb), 0.2);
+            position: relative; overflow: hidden;
+        }
+        .scroll-hint__line::after {
+            content: ''; position: absolute; left: 0; right: 0;
+            height: 50%;
+            background: var(--accent);
+            animation: hintDrop 1.8s var(--ease) infinite;
+        }
+        @keyframes hintDrop {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(220%); }
+        }
+        .bottom__tc {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; letter-spacing: 0.2em;
+            color: rgba(var(--ink-rgb), 0.55);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .bottom__tc::before {
+            content: ''; width: 6px; height: 6px;
+            background: var(--accent); border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* --- Encerramento: lockup vertical à esquerda, surge no fim do scroll --- */
+        .hero__final {
+            position: absolute; inset: 0; z-index: 12;
+            display: flex; align-items: center; justify-content: flex-start;
+            padding-left: var(--pad-x);
+            pointer-events: none;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+        .hero__final-stack {
+            display: flex; align-items: center; gap: 22px;
+            pointer-events: auto;
+        }
+        /* Nome em coluna, lendo de baixo para cima — usa .text-outline:
+           vazado por padrão, preenche em acento no hover. */
+        .hero__final-name {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase;
+            font-size: clamp(3.25rem, 11vh, 8rem);
+            line-height: 1; letter-spacing: -0.01em;
+            cursor: pointer;
+        }
+        .hero__final-label {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.32em;
+            color: rgba(var(--ink-rgb), 0.55);
+        }
+
+        /* --- Marca vertical lateral (lê de baixo para cima) --- */
+        .hero__sidebrand {
+            position: absolute; left: 30px; top: 50%;
+            z-index: 11;
+            writing-mode: vertical-rl;
+            transform: translateY(-50%) rotate(180deg);
+            transform-origin: center center;
+        }
+        /* entrada anima o filho (opacity), deixando o pai livre para o JS
+           controlar o crossfade com o lockup final */
+        .hero__sidebrand .text-outline {
+            display: inline-block;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase;
+            font-size: clamp(0.85rem, 1vw, 1.1rem);
+            letter-spacing: 0.5em;
+            -webkit-text-stroke-width: 1px;
+            animation: rise 1.2s var(--ease) 1.3s both;
+        }
+
+        /* ============================================================
+           DIVISOR MARQUEE — lettering vazado em loop (assinatura do DS)
+           ============================================================ */
+        .marquee {
+            position: relative;
+            border-top: 1px solid rgba(var(--ink-rgb), 0.1);
+            border-bottom: 1px solid rgba(var(--ink-rgb), 0.1);
+            background: rgba(var(--bg-rgb), 1);
+            padding: 28px 0;
+            overflow: hidden;
+        }
+        .marquee::before, .marquee::after {
+            content: ''; position: absolute; top: 0; bottom: 0; width: 96px; z-index: 2;
+            pointer-events: none;
+        }
+        .marquee::before { left: 0; background: linear-gradient(90deg, var(--bg-main), rgba(var(--bg-rgb), 0)); }
+        .marquee::after { right: 0; background: linear-gradient(270deg, var(--bg-main), rgba(var(--bg-rgb), 0)); }
+        .marquee__track { display: flex; overflow: hidden; user-select: none; }
+        .marquee__content {
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: space-around;
+            gap: 56px; min-width: 100%; padding-right: 56px;
+            animation: marqueeScroll 36s linear infinite;
+        }
+        .marquee:hover .marquee__content { animation-play-state: paused; }
+        @keyframes marqueeScroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+        .marquee__word {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(2.4rem, 4vw, 3.6rem);
+            font-weight: 600; text-transform: uppercase; letter-spacing: -0.02em;
+            white-space: nowrap; line-height: 1;
+        }
+        .marquee__accent {
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: clamp(1.8rem, 3vw, 2.6rem);
+            color: var(--accent); white-space: nowrap;
+        }
+        .marquee__dot { width: 7px; height: 7px; background: var(--accent); flex-shrink: 0; transform: rotate(45deg); }
+
+        /* ============================================================
+           REVEAL ON SCROLL (padrão do DS)
+           ============================================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(2.5rem);
+            filter: blur(6px);
+            transition: opacity 1.1s var(--ease), transform 1.1s var(--ease), filter 1.1s var(--ease);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); filter: blur(0); }
+        .reveal.delay-150 { transition-delay: 0.15s; }
+        .reveal.delay-300 { transition-delay: 0.3s; }
+        .reveal.delay-450 { transition-delay: 0.45s; }
+        .reveal.delay-600 { transition-delay: 0.6s; }
+
+        /* Stagger children: cada filho direto ganha delay incremental */
+        .reveal-children > * {
+            opacity: 0;
+            transform: translateY(1.5rem);
+            filter: blur(4px);
+            transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), filter 0.8s var(--ease);
+        }
+        .reveal-children.active > * {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+        .reveal-children.active > *:nth-child(1) { transition-delay: 0.05s; }
+        .reveal-children.active > *:nth-child(2) { transition-delay: 0.12s; }
+        .reveal-children.active > *:nth-child(3) { transition-delay: 0.19s; }
+        .reveal-children.active > *:nth-child(4) { transition-delay: 0.26s; }
+        .reveal-children.active > *:nth-child(5) { transition-delay: 0.33s; }
+        .reveal-children.active > *:nth-child(6) { transition-delay: 0.40s; }
+        .reveal-children.active > *:nth-child(7) { transition-delay: 0.47s; }
+        .reveal-children.active > *:nth-child(8) { transition-delay: 0.54s; }
+
+        /* ============================================================
+           DOBRA 02 — LOJA / CARD DE PRODUTO
+           ============================================================ */
+        .shop {
+            position: relative;
+            max-width: 1400px; margin: 0 auto;
+            padding: clamp(96px, 13vh, 150px) var(--pad-x);
+        }
+        .shop__head { margin-bottom: clamp(56px, 8vh, 88px); }
+        .shop__title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase;
+            font-size: clamp(2.6rem, 5.2vw, 4.5rem);
+            line-height: 0.92; letter-spacing: -0.03em;
+        }
+        .shop__tagline {
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+            color: var(--accent);
+            margin-top: 18px;
+        }
+
+        /* Card à esquerda; coluna editorial à direita */
+        .shop__grid {
+            display: grid;
+            grid-template-columns: minmax(420px, 540px) minmax(0, 1fr);
+            gap: clamp(48px, 6vw, 110px);
+            align-items: start;
+        }
+
+        .shop__stage {
+            display: flex; gap: 16px;
+            align-items: stretch;
+        }
+
+        /* --- Pilha: as outras duas cores espreitam por baixo do card --- */
+        .pcard-deck { position: relative; flex: 1; min-width: 0; }
+        .pcard-deck .pcard { position: relative; z-index: 1; width: 100%; }
+        .deck-card {
+            position: absolute; inset: 0; z-index: 0;
+            border: 1px solid rgba(var(--ink-rgb), 0.14);
+            border-radius: var(--radius);
+            /* sliver da cor da carta na borda inferior */
+            background: linear-gradient(0deg, var(--deck-c) 0, var(--deck-c) 5px, var(--card-bg) 5px);
+            box-shadow: 0 10px 28px rgba(var(--ink-rgb), 0.09);
+            pointer-events: none;
+            transition: transform 0.55s var(--ease);
+        }
+        /* cores das cartas da pilha são dinâmicas (--deck-c via JS):
+           sempre as duas cores NÃO selecionadas */
+        .deck-card:nth-of-type(1) { transform: rotate(-2.3deg) translate(-9px, 13px); }
+        .deck-card:nth-of-type(2) { transform: rotate(1.7deg) translate(8px, 7px); }
+        /* no hover, o leque se abre um pouco mais */
+        .pcard-deck:hover .deck-card:nth-of-type(1) { transform: rotate(-3.4deg) translate(-13px, 17px); }
+        .pcard-deck:hover .deck-card:nth-of-type(2) { transform: rotate(2.7deg) translate(12px, 9px); }
+
+        /* --- Coluna editorial --- */
+        .shop__lead {
+            font-size: clamp(1rem, 1.2vw, 1.125rem);
+            line-height: 1.7;
+            color: rgba(var(--ink-rgb), 0.75);
+            max-width: 46ch;
+            margin-bottom: 40px;
+        }
+        .shop__specs { border-top: 1px solid rgba(var(--ink-rgb), 0.1); }
+        .spec {
+            display: grid; grid-template-columns: 130px 1fr;
+            gap: 20px; align-items: baseline;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(var(--ink-rgb), 0.1);
+        }
+        .spec dt {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em;
+            color: rgba(var(--ink-rgb), 0.5);
+        }
+        .spec dd { font-size: 0.9rem; color: rgba(var(--ink-rgb), 0.8); }
+        .shop__fig {
+            margin-top: 36px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em;
+            color: rgba(var(--ink-rgb), 0.45); line-height: 2;
+        }
+
+        /* --- Card de produto --- */
+        :root { --card-bg: #ffffff; }
+        html.dark { --card-bg: #2a2f2d; }
+        .pcard {
+            background: var(--card-bg);
+            border: 1px solid rgba(var(--ink-rgb), 0.1);
+            border-radius: var(--radius);
+            transition: box-shadow 0.4s var(--ease), transform 0.4s var(--ease);
+        }
+        .pcard:hover {
+            box-shadow: 0 12px 44px rgba(var(--accent-rgb), 0.14);
+            transform: translateY(-3px);
+        }
+
+        .pcard__media {
+            position: relative;
+            aspect-ratio: 16 / 10.5;
+            background: #f4f5f4; /* placa de estúdio — fixa nos dois temas */
+            border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+            overflow: hidden;
+        }
+        .pcard__imgs img {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            opacity: 0;
+            transform: scale(1.04) translateY(10px);
+            transition: opacity 0.5s var(--ease), transform 0.7s var(--ease);
+        }
+        .pcard__imgs img.is-active { opacity: 1; transform: scale(1) translateY(0); }
+
+        .pcard__badge {
+            position: absolute; top: 16px; left: 16px; z-index: 3;
+            background: var(--accent); color: #fff;
+            font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.2em; text-indent: 0.2em;
+            padding: 6px 12px;
+        }
+        .pcard__fav {
+            position: absolute; top: 16px; right: 16px; z-index: 3;
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(45, 50, 47, 0.15);
+            color: rgba(45, 50, 47, 0.55);
+            transition: all 0.3s var(--ease);
+        }
+        .pcard__fav:hover { color: var(--accent); border-color: var(--accent); }
+        .pcard__fav[aria-pressed="true"] { color: #fff; background: var(--accent); border-color: var(--accent); }
+        .pcard__fav svg { transition: transform 0.3s var(--ease); }
+        .pcard__fav[aria-pressed="true"] svg { transform: scale(1.15); }
+
+        .pcard__body { padding: 26px 28px 30px; }
+        .pcard__toprow {
+            display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+        }
+        .pcard__name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.5rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: -0.01em;
+            border-bottom: 2px solid var(--accent); padding-bottom: 4px;
+        }
+        .pcard__price {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.35rem; font-weight: 600;
+        }
+        .pcard__colorline {
+            margin-top: 14px;
+            font-size: 0.875rem; color: rgba(var(--ink-rgb), 0.6);
+        }
+        .pcard__colorline strong { font-weight: 600; color: rgba(var(--ink-rgb), 0.85); }
+
+        .pcard__rating { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+        .pcard__stars { display: flex; gap: 2px; color: var(--accent); }
+        .pcard__stars .star--empty { color: rgba(var(--ink-rgb), 0.22); }
+        .pcard__count {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 11px; color: rgba(var(--ink-rgb), 0.5);
+        }
+
+        .pcard__bottomrow {
+            display: flex; align-items: center; justify-content: space-between; gap: 18px;
+            margin-top: 26px;
+        }
+        .pcard__swatches { display: flex; gap: 12px; }
+        .swatch {
+            width: 26px; height: 26px; border-radius: 50%;
+            background: var(--sw);
+            border: 1px solid rgba(var(--ink-rgb), 0.18);
+            transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+        }
+        .swatch:hover { transform: scale(1.18); }
+        .swatch[aria-checked="true"] {
+            box-shadow: 0 0 0 3px var(--card-bg), 0 0 0 4.5px rgba(var(--ink-rgb), 0.75);
+        }
+        .pcard__add {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 15px 24px;
+            font-size: 10.5px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.2em; text-indent: 0.2em;
+            background: var(--btn-primary-bg); color: var(--btn-primary-ink);
+            position: relative; overflow: hidden;
+            transition: background 0.35s var(--ease), color 0.35s var(--ease);
+        }
+        .pcard__add::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+            transition: left 0.55s ease;
+        }
+        .pcard__add:hover { background: var(--accent); color: #fff; }
+        .pcard__add:hover::before { left: 100%; }
+        .pcard__add svg { transition: transform 0.3s var(--ease); }
+        .pcard__add:hover svg { transform: rotate(90deg); }
+        .pcard__add.is-added { background: var(--accent); color: #fff; }
+
+        /* ============================================================
+           DOBRA 03 — TECNOLOGIA · dobra escura (doutrina AEX)
+           Anatomia interativa + métricas com contadores
+           ============================================================ */
+        .tech {
+            position: relative;
+            background: var(--charcoal);
+            color: #edf0ee;
+            overflow: hidden;
+        }
+        /* malha de grid da dobra escura */
+        .tech::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background-size: 64px 64px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+        .tech__orb {
+            position: absolute; top: 18%; right: 6%;
+            width: 26rem; height: 26rem;
+            background: radial-gradient(circle at 30% 30%, rgba(63, 85, 107, 0.35), transparent 65%);
+            border-radius: 50%; filter: blur(48px);
+            pointer-events: none;
+            animation: orbFloat 16s ease-in-out infinite;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(2rem, -2.5rem, 0) scale(1.1); }
+        }
+        .tech__inner {
+            position: relative;
+            max-width: 1400px; margin: 0 auto;
+            padding: clamp(96px, 13vh, 150px) var(--pad-x);
+        }
+
+        .tech__head { margin-bottom: clamp(56px, 8vh, 88px); }
+        .tech .eyebrow__text { color: rgba(237, 240, 238, 0.55); }
+        .tech__title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase;
+            font-size: clamp(2.6rem, 5.2vw, 4.5rem);
+            line-height: 0.92; letter-spacing: -0.03em;
+            color: #fff;
+        }
+        .tech__title .outline-w {
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
+            transition: color 0.6s var(--ease);
+        }
+        .tech__title .outline-w:hover { color: #8AA4BD; -webkit-text-stroke-color: #8AA4BD; }
+        .tech__tagline {
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+            color: #8AA4BD;
+            margin-top: 18px;
+        }
+
+        .tech__grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+            gap: clamp(48px, 6vw, 96px);
+            align-items: start;
+            position: relative;
+        }
+        /* traço HUD: liga a mira ativa ao conceito (recalculado em JS) */
+        .tech__link {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            overflow: visible; pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+            transition: opacity 0.5s var(--ease);
+        }
+        .tech__link.is-on { opacity: 1; }
+        #tech-link-path {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 1.6;
+            stroke-dasharray: 2 8;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 3px rgba(var(--accent-rgb), 0.5));
+            /* os pontos deslizam devagar da mira (início) para o card (fim) */
+            animation: techFlow 3.4s linear infinite;
+        }
+        /* traço sólido que cresce e revela o tracejado por baixo (desenho) */
+        #tech-link-mask-path { fill: none; stroke: #fff; stroke-width: 12; stroke-linecap: round; }
+        @keyframes techFlow { to { stroke-dashoffset: -40; } }
+        .tech__link circle {
+            fill: var(--accent);
+            transform-box: fill-box; transform-origin: center;
+            /* a chegada respira devagar, recebendo o fluxo */
+            animation: techPulse 3.4s ease-in-out infinite;
+        }
+        @keyframes techPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.28); opacity: 1; }
+        }
+
+        /* --- Palco: foto de estúdio com miras numeradas --- */
+        .tech__stage { position: sticky; top: 90px; }
+        .tech__plate {
+            position: relative;
+            background: #f4f5f4;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .tech__plate img {
+            display: block; width: 100%;
+            aspect-ratio: 4 / 3.3; object-fit: cover; object-position: center;
+        }
+        .tech__plate-tag {
+            position: absolute; top: 14px; left: 14px; z-index: 3;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;
+            background: rgba(255, 255, 255, 0.88);
+            color: rgba(45, 50, 47, 0.8);
+            border: 1px solid rgba(45, 50, 47, 0.14);
+            padding: 5px 10px;
+            backdrop-filter: blur(6px);
+        }
+        .tech__stage-fig {
+            margin-top: 18px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em;
+            color: rgba(237, 240, 238, 0.4); line-height: 2;
+        }
+
+        /* mira (hotspot): crosshair numerado com anel pulsante */
+        .hs {
+            position: absolute; z-index: 2;
+            width: 34px; height: 34px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(30, 36, 32, 0.45);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            color: #2d322f;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s var(--ease), color 0.3s var(--ease),
+                        border-color 0.3s var(--ease), transform 0.3s var(--ease);
+        }
+        .hs::before {
+            content: ''; position: absolute; inset: -1px;
+            border-radius: 50%;
+            border: 1px solid rgba(63, 85, 107, 0.7);
+            animation: hsPing 2.4s var(--ease) infinite;
+        }
+        .hs svg { display: block; }
+        .hs__n {
+            position: absolute; top: -7px; right: -10px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+            background: #2d322f; color: #fff;
+            padding: 2px 5px; border-radius: 2px;
+            transition: background 0.3s var(--ease);
+        }
+        .hs:hover, .hs.is-active {
+            background: var(--accent); border-color: var(--accent); color: #fff;
+            transform: translate(-50%, -50%) scale(1.12);
+        }
+        .hs.is-active::before { animation-duration: 1.6s; }
+        .hs:hover .hs__n, .hs.is-active .hs__n { background: var(--accent); }
+        @keyframes hsPing {
+            0% { transform: scale(1); opacity: 0.9; }
+            80%, 100% { transform: scale(2.1); opacity: 0; }
+        }
+
+        /* --- Lista técnica: flashlight cards sincronizados com as miras --- */
+        .tech__list { display: flex; flex-direction: column; gap: 14px; }
+        .tech-item {
+            position: relative;
+            text-align: left; width: 100%;
+            padding: 22px 24px 24px 26px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 2px solid rgba(255, 255, 255, 0.14);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: background 0.35s var(--ease), border-color 0.35s var(--ease);
+        }
+        /* lanterna: brilho radial que segue o cursor */
+        .tech-item::before {
+            content: ''; position: absolute; inset: 0; z-index: 0;
+            background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%),
+                rgba(138, 164, 189, 0.1), transparent 40%);
+            opacity: 0; transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        .tech-item:hover::before { opacity: 1; }
+        .tech-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .tech-item.is-active {
+            border-left-color: #8AA4BD;
+            background: rgba(63, 85, 107, 0.16);
+            border-color: rgba(138, 164, 189, 0.35);
+        }
+        .tech-item__top {
+            position: relative; z-index: 1;
+            display: flex; align-items: baseline; gap: 14px;
+        }
+        .tech-item__idx {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 11px; letter-spacing: 0.2em;
+            color: #8AA4BD;
+        }
+        .tech-item__name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.15rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0;
+            color: #fff;
+        }
+        .tech-item__desc {
+            position: relative; z-index: 1;
+            margin-top: 10px;
+            font-size: 0.9rem; line-height: 1.65;
+            color: rgba(237, 240, 238, 0.62);
+        }
+        .tech-item__desc em {
+            font-family: 'Playfair Display', serif;
+            font-style: italic; color: #8AA4BD;
+        }
+
+        /* --- Métricas: contadores sobre carvão --- */
+        .tech__metrics {
+            margin-top: clamp(72px, 10vh, 120px);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .metric {
+            padding: clamp(40px, 6vh, 64px) 20px 0;
+            text-align: center;
+        }
+        .metric + .metric { border-left: 1px solid rgba(255, 255, 255, 0.08); }
+        .metric__num {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(2.6rem, 4.6vw, 4.25rem);
+            font-weight: 600; letter-spacing: -0.02em;
+            color: #fff; line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .metric__suffix {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(1.2rem, 1.9vw, 1.8rem);
+            font-weight: 600; color: #8AA4BD;
+            margin-left: 4px;
+        }
+        .metric__label {
+            display: block;
+            margin-top: 14px;
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.2em;
+            color: rgba(237, 240, 238, 0.45);
+        }
+
+        /* ============================================================
+           DOBRA 04 — ATELIÊ · construa o seu boné
+           Recoloração ao vivo da foto: hue-rotate + saturate não tocam
+           em neutros — o brasão preto/branco e o fundo ficam intactos.
+           ============================================================ */
+        .atelier {
+            position: relative;
+            background: var(--bg-main);
+            border-top: 1px solid rgba(var(--ink-rgb), 0.08);
+            overflow: hidden;
+        }
+        .atelier__inner {
+            position: relative;
+            max-width: 1400px; margin: 0 auto;
+            padding: clamp(96px, 13vh, 150px) var(--pad-x);
+        }
+        .atelier__head { margin-bottom: clamp(56px, 8vh, 88px); }
+        .atelier__title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase;
+            font-size: clamp(2.6rem, 5.2vw, 4.5rem);
+            line-height: 0.92; letter-spacing: -0.03em;
+        }
+        .atelier__tagline {
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+            color: var(--accent);
+            margin-top: 18px;
+        }
+
+        .atelier__grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+            gap: clamp(48px, 6vw, 110px);
+            align-items: center;
+        }
+
+        /* --- Placa de estúdio com a foto recolorida ao vivo --- */
+        .atelier__plate {
+            position: relative;
+            background: #f4f5f4;
+            border: 1px solid rgba(var(--ink-rgb), 0.1);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .atelier__plate img {
+            display: block; width: 100%;
+            aspect-ratio: 4 / 3.3;
+            object-fit: cover; object-position: center;
+            filter: hue-rotate(var(--hue, 0deg)) saturate(var(--sat, 100%));
+            transition: filter 0.2s ease;
+        }
+        .atelier__plate-tag {
+            position: absolute; top: 14px; left: 14px; z-index: 2;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;
+            background: rgba(255, 255, 255, 0.88);
+            color: rgba(45, 50, 47, 0.8);
+            border: 1px solid rgba(45, 50, 47, 0.14);
+            padding: 5px 10px;
+            backdrop-filter: blur(6px);
+        }
+        .atelier__fig {
+            margin-top: 18px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.25em;
+            color: rgba(var(--ink-rgb), 0.45); line-height: 2;
+        }
+
+        /* --- Painel de controles --- */
+        .ctl { margin-bottom: 30px; }
+        .ctl__head {
+            display: flex; align-items: baseline; justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .ctl__label {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.22em;
+            color: rgba(var(--ink-rgb), 0.55);
+        }
+        .ctl__val {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; letter-spacing: 0.12em;
+            color: var(--accent);
+        }
+        .ctl__range {
+            -webkit-appearance: none; appearance: none;
+            display: block; width: 100%; height: 18px;
+            background: transparent; cursor: pointer;
+        }
+        .ctl__range::-webkit-slider-runnable-track {
+            height: 3px;
+            background: rgba(var(--ink-rgb), 0.15);
+        }
+        .ctl__range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px; border-radius: 50%;
+            margin-top: -6.5px;
+            background: var(--bg-main);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+            transition: transform 0.2s var(--ease);
+        }
+        .ctl__range::-webkit-slider-thumb:hover { transform: scale(1.18); }
+        .ctl__range::-moz-range-track {
+            height: 3px;
+            background: rgba(var(--ink-rgb), 0.15);
+        }
+        .ctl__range::-moz-range-thumb {
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--bg-main);
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+        }
+        /* track do matiz: o arco-íris parte do rosa-base (hue 350) */
+        .ctl__range--hue::-webkit-slider-runnable-track {
+            background: linear-gradient(90deg,
+                hsl(350, 60%, 73%), hsl(50, 60%, 73%), hsl(110, 60%, 73%),
+                hsl(170, 60%, 73%), hsl(230, 60%, 73%), hsl(290, 60%, 73%),
+                hsl(350, 60%, 73%));
+        }
+        .ctl__range--hue::-moz-range-track {
+            background: linear-gradient(90deg,
+                hsl(350, 60%, 73%), hsl(50, 60%, 73%), hsl(110, 60%, 73%),
+                hsl(170, 60%, 73%), hsl(230, 60%, 73%), hsl(290, 60%, 73%),
+                hsl(350, 60%, 73%));
+        }
+
+        /* --- Presets das cores oficiais --- */
+        .atelier__presets {
+            display: flex; flex-wrap: wrap; gap: 12px;
+            margin-bottom: 34px;
+        }
+        .preset-chip {
+            display: inline-flex; align-items: center; gap: 9px;
+            padding: 9px 16px;
+            border: 1px solid rgba(var(--ink-rgb), 0.2);
+            border-radius: 999px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em;
+            color: rgba(var(--ink-rgb), 0.7);
+            transition: border-color 0.3s var(--ease), color 0.3s var(--ease),
+                        background 0.3s var(--ease);
+        }
+        .preset-chip .dot {
+            width: 11px; height: 11px; border-radius: 50%;
+            background: var(--sw);
+            border: 1px solid rgba(var(--ink-rgb), 0.18);
+        }
+        .preset-chip:hover { border-color: var(--accent); color: var(--accent); }
+        .preset-chip.is-on {
+            background: var(--btn-primary-bg);
+            border-color: var(--btn-primary-bg);
+            color: var(--btn-primary-ink);
+        }
+
+        /* --- Resultado: swatch + nome gerado + preço --- */
+        .atelier__result {
+            display: flex; align-items: center; gap: 16px;
+            padding: 18px 22px;
+            background: var(--card-bg);
+            border: 1px solid rgba(var(--ink-rgb), 0.1);
+            border-radius: var(--radius);
+            margin-bottom: 34px;
+        }
+        .atelier__swatch {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--c, #EBA6B3);
+            border: 1px solid rgba(var(--ink-rgb), 0.18);
+            flex-shrink: 0;
+            transition: background 0.2s ease;
+        }
+        .atelier__cname {
+            display: block;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.25rem; font-weight: 600;
+            text-transform: uppercase; line-height: 1.1;
+        }
+        .atelier__cmeta {
+            display: block; margin-top: 4px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; letter-spacing: 0.15em;
+            color: rgba(var(--ink-rgb), 0.5);
+        }
+        .atelier__price {
+            margin-left: auto;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.3rem; font-weight: 600;
+        }
+
+        .atelier__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .atelier__note {
+            margin-top: 24px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;
+            color: rgba(var(--ink-rgb), 0.5);
+        }
+
+        /* ============================================================
+           DOBRA 05 — COMPRE JÁ · última chamada
+           ============================================================ */
+        .buy {
+            position: relative;
+            background: var(--bg-main);
+            overflow: hidden;
+        }
+        .buy::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background-size: 48px 48px;
+            background-image:
+                linear-gradient(to right, rgba(var(--ink-rgb), 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(var(--ink-rgb), 0.04) 1px, transparent 1px);
+        }
+        .buy__inner {
+            position: relative;
+            max-width: 1100px; margin: 0 auto;
+            padding: clamp(96px, 14vh, 160px) var(--pad-x);
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center;
+        }
+        .buy .eyebrow { justify-content: center; }
+
+        .buy__title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600; text-transform: uppercase;
+            font-size: clamp(3rem, 7.5vw, 6.5rem);
+            line-height: 0.9; letter-spacing: -0.04em;
+        }
+        .buy__title .dot { color: var(--accent); -webkit-text-stroke: 0; }
+        .buy__tagline {
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+            color: var(--accent);
+            margin-top: 22px;
+        }
+
+        /* --- Estoque por cor: barras que preenchem no reveal --- */
+        .stock {
+            width: 100%; max-width: 560px;
+            margin: clamp(48px, 7vh, 72px) auto 0;
+            display: flex; flex-direction: column; gap: 20px;
+            text-align: left;
+        }
+        .stock__row {
+            display: grid;
+            grid-template-columns: auto 110px 1fr auto;
+            align-items: center; gap: 14px;
+        }
+        .stock__dot {
+            width: 13px; height: 13px; border-radius: 50%;
+            background: var(--sw);
+            border: 1px solid rgba(var(--ink-rgb), 0.2);
+        }
+        .stock__name {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em;
+            color: rgba(var(--ink-rgb), 0.65);
+        }
+        .stock__bar {
+            position: relative; height: 2px;
+            background: rgba(var(--ink-rgb), 0.12);
+            overflow: hidden;
+        }
+        .stock__fill {
+            position: absolute; top: 0; bottom: 0; left: 0;
+            width: 0;
+            background: var(--accent);
+            transition: width 1.4s var(--ease) 0.45s;
+        }
+        .reveal.active .stock__fill { width: var(--w); }
+        .stock__left {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; letter-spacing: 0.12em;
+            color: rgba(var(--ink-rgb), 0.5);
+            white-space: nowrap;
+        }
+        .stock__left strong { color: var(--accent); font-weight: 600; }
+
+        .buy__actions {
+            display: flex; align-items: center; justify-content: center;
+            flex-wrap: wrap; gap: 20px;
+            margin-top: clamp(44px, 6vh, 64px);
+        }
+        .buy__price {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1rem; font-weight: 600;
+            border-left: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+            margin-left: 4px; padding-left: 16px;
+        }
+        .buy__note {
+            margin-top: 32px;
+            display: flex; align-items: center; flex-wrap: wrap;
+            justify-content: center; gap: 10px 18px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.18em;
+            color: rgba(var(--ink-rgb), 0.5);
+        }
+        .buy__note .sep {
+            width: 5px; height: 5px;
+            background: var(--accent);
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+           RODAPÉ — carvão com borda de aço (padrão do DS)
+           ============================================================ */
+        .site-footer {
+            position: relative;
+            background: var(--charcoal);
+            color: #edf0ee;
+            border-top: 4px solid var(--accent);
+            overflow: hidden;
+        }
+        .site-footer::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background-size: 64px 64px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+        .footer__inner {
+            position: relative;
+            max-width: 1400px; margin: 0 auto;
+            padding: clamp(64px, 9vh, 96px) var(--pad-x) 44px;
+        }
+        .footer__top {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: clamp(40px, 6vw, 96px);
+            align-items: end;
+            margin-bottom: clamp(48px, 7vh, 72px);
+        }
+        .footer__brand-row {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 18px;
+        }
+        .footer__brand-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.45rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: -0.02em;
+            color: #fff; line-height: 1;
+        }
+        .footer__lede {
+            font-size: 0.875rem; line-height: 1.7;
+            color: rgba(237, 240, 238, 0.55);
+            max-width: 40ch;
+            margin-bottom: 28px;
+        }
+        .footer__news { display: flex; max-width: 440px; }
+        .footer__input {
+            flex: 1; min-width: 0;
+            background: #2d322f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: inherit;
+            font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em;
+            padding: 14px 16px;
+            transition: border-color 0.3s var(--ease);
+        }
+        .footer__input::placeholder { color: rgba(255, 255, 255, 0.3); }
+        .footer__input:focus { outline: none; border-color: var(--accent); }
+        .footer__send {
+            flex-shrink: 0;
+            background: var(--accent); color: #fff;
+            border: 1px solid var(--accent);
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.2em; text-indent: 0.2em;
+            padding: 14px 22px;
+            position: relative; overflow: hidden;
+            transition: background 0.35s var(--ease), color 0.35s var(--ease), border-color 0.35s var(--ease);
+        }
+        .footer__send::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+            transition: left 0.55s ease;
+        }
+        .footer__send:hover { background: #fff; color: var(--charcoal); border-color: #fff; }
+        .footer__send:hover::before { left: 100%; }
+        .footer__send.is-sent { background: #fff; color: var(--charcoal); border-color: #fff; }
+
+        .footer__mark {
+            font-family: 'Oswald', sans-serif;
+            font-size: clamp(4rem, 9vw, 8rem);
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: -0.03em; line-height: 0.85;
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
+            transition: color 0.6s var(--ease), -webkit-text-stroke-color 0.6s var(--ease);
+            cursor: default; user-select: none;
+        }
+        .footer__mark:hover { color: #8AA4BD; -webkit-text-stroke-color: #8AA4BD; }
+
+        .footer__bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 28px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 18px;
+        }
+        .footer__copy {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;
+            color: rgba(237, 240, 238, 0.4);
+        }
+        .footer__links { display: flex; gap: 28px; }
+        .footer__links a {
+            font-size: 10px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.2em;
+            color: rgba(237, 240, 238, 0.5);
+            transition: color 0.3s;
+        }
+        .footer__links a:hover { color: #8AA4BD; }
+        .to-top {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: rgba(237, 240, 238, 0.6);
+            transition: all 0.4s var(--ease);
+        }
+        .to-top svg { transition: transform 0.35s var(--ease); }
+        .to-top:hover { border-color: var(--accent); background: var(--accent); color: #fff; }
+        .to-top:hover svg { transform: translateY(-3px); }
+
+        /* ============================================================
+           RESPONSIVO
+           ============================================================ */
+        @media (max-width: 1024px) {
+            .hero__rail { display: none; }
+            .site-nav { display: none; }
+            .hero__sidebrand { display: none; }
+            .shop__grid { grid-template-columns: 1fr; gap: 56px; }
+            .shop__stage { max-width: 600px; }
+            .tech__grid { grid-template-columns: 1fr; gap: 48px; }
+            .tech__stage { position: static; max-width: 640px; }
+            .tech__link { display: none; }
+            .footer__top { grid-template-columns: 1fr; align-items: start; }
+            .footer__mark { order: -1; }
+            .atelier__grid { grid-template-columns: 1fr; gap: 48px; }
+            .atelier__stage { max-width: 640px; }
+        }
+
+        @media (max-width: 700px) {
+            :root { --video-pos: 55% 50%; }
+            .hero { height: 320vh; }
+            .hero__layout { align-items: flex-end; padding-bottom: 132px; }
+            .hero__copy { max-width: 100%; }
+            .headline { font-size: clamp(2.7rem, 12.5vw, 3.9rem); }
+            .eyebrow { margin-bottom: 24px; }
+            .subcopy { margin-top: 22px; max-width: 34ch; font-size: 0.92rem; }
+            .eyebrow__extra { display: none; }
+            .hero__actions { margin-top: 30px; gap: 12px; width: 100%; }
+            .btn { padding: 16px 24px; flex: 1; justify-content: center; }
+            .ov--left {
+                background: linear-gradient(0deg,
+                    rgba(var(--bg-rgb), 0.92) 0%,
+                    rgba(var(--bg-rgb), 0.55) 38%,
+                    rgba(var(--bg-rgb), 0) 68%);
+            }
+            .hero__bottom { bottom: 22px; }
+            .bottom__tc { display: none; }
+            .scroll-hint { display: none; }
+            .hero__final { padding-bottom: 9vh; }
+            .spec { grid-template-columns: 96px 1fr; gap: 14px; }
+            .pcard__body { padding: 22px 20px 24px; }
+            .pcard__bottomrow { flex-wrap: wrap; }
+            .pcard__add { flex: 1; justify-content: center; }
+            .shop__stage { flex-direction: column; gap: 12px; }
+            .tech__metrics { grid-template-columns: repeat(2, 1fr); }
+            .metric { padding-top: 36px; }
+            .metric:nth-child(3) { border-left: 0; }
+            .metric:nth-child(n+3) { border-top: 1px solid rgba(255, 255, 255, 0.08); margin-top: 28px; }
+            .stock__row { grid-template-columns: auto 86px 1fr; }
+            .stock__left { grid-column: 2 / -1; margin-top: -8px; }
+            .buy__actions { flex-direction: column; width: 100%; }
+            .buy__actions .btn { width: 100%; justify-content: center; }
+            .footer__news { flex-direction: column; gap: 10px; }
+            .footer__send { padding: 14px; }
+            .footer__bottom { flex-direction: column; align-items: flex-start; }
+            .atelier__result { flex-wrap: wrap; }
+            .atelier__price { margin-left: 52px; width: 100%; }
+            .atelier__actions .btn { width: 100%; justify-content: center; }
+        }
+
+        /* ============================================================
+           MOVIMENTO REDUZIDO — hero estática e elegante
+           ============================================================ */
+        @media (prefers-reduced-motion: reduce) {
+            .hero { height: 100vh; height: 100svh; }
+            .site-header, .eyebrow, .subcopy, .hero__actions,
+            .hero__rail, .hero__bottom { animation: none; opacity: 1; transform: none; }
+            .headline .line > span { animation: none; transform: none; }
+            .scroll-hint__line::after, .bottom__tc::before, .hero__veil-bar::after { animation: none; }
+            .hero__final { display: none; }
+            /* vídeo em loop cobre a tela inteira, sem push-in nem pull-back */
+            .hero__media video, .hero__media img { transform: none; object-fit: cover; }
+            .ov--feather { display: none; }
+            .hero__sidebrand { animation: none; opacity: 1; }
+            .marquee__content { animation: none; }
+            .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+            .tech__orb { animation: none; }
+            .hs::before { animation: none; opacity: 0; }
+            .stock__fill { transition: none; }
+            .tech__link path, .tech__link circle { animation: none; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Aplica o tema salvo antes do primeiro paint (evita flash) -->
+    <script>
+        try { if (localStorage.getItem('ariete-theme') === 'dark') document.documentElement.classList.add('dark'); } catch (e) { }
+    </script>
+
+    <div class="grain" aria-hidden="true"></div>
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header class="site-header">
+        <a class="brand" href="#" aria-label="ARIETE — início">
+            <svg class="brand__mark" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <rect x="8" y="0.8" width="10.2" height="10.2" transform="rotate(45 8 0.8)" stroke="currentColor" stroke-width="1.4" />
+                <circle cx="8" cy="8" r="1.6" fill="currentColor" />
+            </svg>
+            <span class="brand__name">Ariete</span>
+            <span class="brand__chip">Drop 01</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Navegação principal">
+            <a href="#produto">Produto</a>
+            <a href="#tecnologia">Tecnologia</a>
+            <a href="#atelie">Ateliê</a>
+        </nav>
+
+        <button class="light-toggle" id="light-toggle" aria-pressed="false" aria-label="Alternar modo escuro" title="Modo escuro">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                <circle cx="7.5" cy="7.5" r="4.5" stroke="currentColor" stroke-width="1.3" />
+                <path d="M7.5 3 A4.5 4.5 0 0 1 7.5 12 Z" fill="currentColor" />
+            </svg>
+        </button>
+    </header>
+
+    <main>
+        <!-- ============================================================
+             HERO — vídeo full-screen controlado pelo scroll
+             A altura da seção é a "pista"; o conteúdo fica pinned.
+             ============================================================ -->
+        <section class="hero" id="hero">
+            <div class="hero__pin">
+
+                <!-- Camada 1: mídia cinematográfica -->
+                <div class="hero__media">
+                    <div class="hero__media-inner" id="media-inner">
+                        <video id="hero-video" muted playsinline preload="auto">
+                            <!-- versão otimizada para scrub: 1920px, intra-only (todo frame é keyframe) -->
+                            <source src="assets/media/video-chapeu-rosa-scrub.mp4" type="video/mp4" />
+                            <source src="assets/media/video-chapeu-rosa-e-gato-bonito.mp4" type="video/mp4" />
+                            <!-- fallback -->
+                            <source src="assets/media/video-chapeu-rosa-e-gato-bonito.mp4" type="video/mp4" />
+                        </video>
+                        <!-- variante do modo escuro: mesmo tratamento intra-only -->
+                        <video id="hero-video-dark" muted playsinline preload="auto" aria-hidden="true">
+                            <source src="assets/media/video-chapeu-preto-scrub.mp4" type="video/mp4" />
+                            <source src="assets/media/video-chapeu-rosa-e-bonito-preto.mp4" type="video/mp4" />
+                        </video>
+                        <img class="hero__fallback" src="assets/media/chapeu-rosa-ariete-bonito.png" alt="Boné rosa Ariete" />
+                    </div>
+                    <div class="ov ov--left" id="ov-left"></div>
+                    <div class="ov ov--top"></div>
+                    <div class="ov ov--bottom"></div>
+                    <div class="ov ov--vignette" id="ov-vignette"></div>
+                    <div class="ov ov--feather" id="ov-feather">
+                        <span class="fe fe--left"></span>
+                        <span class="fe fe--right"></span>
+                        <span class="fe fe--top"></span>
+                        <span class="fe fe--bottom"></span>
+                    </div>
+                </div>
+
+                <!-- Marca vertical na lateral esquerda — vazada, preenche no hover -->
+                <div class="hero__sidebrand" id="side-brand">
+                    <span class="text-outline">Ariete</span>
+                </div>
+
+                <!-- Camada 2: lettering + CTAs -->
+                <div class="hero__layout">
+                    <div class="hero__copy" id="hero-copy">
+                        <div class="eyebrow">
+                            <span class="eyebrow__line"></span>
+                            <span class="eyebrow__text">Ariete / Drop 01<span class="eyebrow__extra"> — Limited Cap Series</span></span>
+                        </div>
+
+                        <h1 class="headline">
+                            <span class="line"><span>O boné</span></span>
+                            <span class="line"><span class="text-outline">mais icônico</span></span>
+                            <span class="line"><span>da Ariete<span class="dot">.</span></span></span>
+                        </h1>
+
+                        <p class="subcopy">
+                            Design leve, presença marcante e acabamento pensado
+                            para quem transforma o cotidiano em <em>assinatura</em>.
+                        </p>
+
+                        <div class="hero__actions">
+                            <a class="btn btn--primary magnetic" href="#comprar">
+                                Comprar Agora
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                                    <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </a>
+                            <a class="btn btn--ghost magnetic" href="#explorar">Explorar</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Camada 3: trilho técnico à direita -->
+                <aside class="hero__rail" id="hero-rail" aria-hidden="true">
+                    <div class="rail__fig">Fig. 01<br />Boné Ariete — Rosa</div>
+
+                    <div>
+                        <div class="rail__scene">01<small>Cena / Drop</small></div>
+                    </div>
+
+                    <svg class="rail__arrow" width="12" height="34" viewBox="0 0 12 34" fill="none" aria-hidden="true">
+                        <path d="M6 0v30M1.5 27.5 6 32l4.5-4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+
+                    <div class="rail__coords">23.5505° S<br />46.6333° W</div>
+
+                    <div class="rail__track"><span class="rail__track-fill" id="rail-fill"></span></div>
+                </aside>
+
+                <!-- Camada 4: microtextos inferiores -->
+                <div class="hero__bottom">
+                    <span class="bottom__id">Design, conforto e presença</span>
+                    <div class="scroll-hint" id="scroll-hint">
+                        <span class="scroll-hint__label">Scroll to experience</span>
+                        <span class="scroll-hint__line"></span>
+                    </div>
+                    <span class="bottom__tc">TC <span id="timecode">00:00:00</span></span>
+                </div>
+
+                <!-- Camada 5: lockup vertical de encerramento (surge no fim do scroll) -->
+                <div class="hero__final" id="hero-final">
+                    <div class="hero__final-stack">
+                        <span class="hero__final-name text-outline">Ariete®</span>
+                        <span class="hero__final-label">Drop 01 — Disponível em breve</span>
+                    </div>
+                </div>
+
+                <!-- Véu de carregamento -->
+                <div class="hero__veil" id="hero-veil">
+                    <span class="hero__veil-name">Ariete</span>
+                    <span class="hero__veil-bar"></span>
+                    <span class="hero__veil-label">Carregando Drop 01</span>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================================
+             DIVISOR MARQUEE — transição editorial entre as dobras
+             ============================================================ -->
+        <div class="marquee reveal" aria-hidden="true">
+            <div class="marquee__track">
+                <div class="marquee__content">
+                    <span class="marquee__word text-outline">Drop 01</span>
+                    <span class="marquee__dot"></span>
+                    <span class="marquee__word">Ariete</span>
+                    <span class="marquee__dot"></span>
+                    <span class="marquee__accent">série limitada</span>
+                    <span class="marquee__dot"></span>
+                    <span class="marquee__word text-outline">Três cores</span>
+                    <span class="marquee__dot"></span>
+                    <span class="marquee__word">Uma presença</span>
+                    <span class="marquee__dot"></span>
+                </div>
+                <div class="marquee__content" aria-hidden="true">
+                    <span class="marquee__word text-outline">Drop 01</span>
+                    <span class="marquee__dot"></span>
+                    <span class="marquee__word">Ariete</span>
+                    <span class="marquee__dot"></span>
+                    <span class="marquee__accent">série limitada</span>
+                    <span class="marquee__dot"></span>
+                    <span class="marquee__word text-outline">Três cores</span>
+                    <span class="marquee__dot"></span>
+                    <span class="marquee__word">Uma presença</span>
+                    <span class="marquee__dot"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             DOBRA 02 — LOJA · um card, três temperamentos
+             ============================================================ -->
+        <section class="shop" id="produto">
+            <header class="shop__head reveal">
+                <div class="eyebrow">
+                    <span class="eyebrow__line"></span>
+                    <span class="eyebrow__text">02 / Drop 01 — Cores disponíveis</span>
+                </div>
+                <h2 class="shop__title">Escolha sua <span class="text-outline">assinatura</span></h2>
+                <p class="shop__tagline">Mesmo corte. Três temperamentos.</p>
+            </header>
+
+            <div class="shop__grid" id="shop-grid">
+                <div class="shop__stage reveal delay-150">
+                    <div class="pcard-deck">
+                        <span class="deck-card" aria-hidden="true"></span>
+                        <span class="deck-card" aria-hidden="true"></span>
+                        <article class="pcard" id="pcard">
+                    <div class="pcard__media">
+                        <span class="pcard__badge">Drop 01</span>
+                        <button class="pcard__fav" aria-pressed="false" aria-label="Adicionar aos favoritos">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                                <path d="M9 15.5C9 15.5 2 11.6 2 6.9 2 4.6 3.8 3 5.9 3 7.2 3 8.4 3.7 9 4.7 9.6 3.7 10.8 3 12.1 3 14.2 3 16 4.6 16 6.9 16 11.6 9 15.5 9 15.5Z" stroke="currentColor" stroke-width="1.4" fill="currentColor" fill-opacity="0" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                        <div class="pcard__imgs">
+                            <img data-color="rosa" src="assets/media/chapeu-rosa-ariete-fundo-branco.jpeg" alt="Boné Ariete rosa" class="is-active" />
+                            <img data-color="verde" src="assets/media/chapeu-esverdeado-ariete-fundo-branco.jpeg" alt="Boné Ariete verde" />
+                            <img data-color="preto" src="assets/media/chapeu-preto-ariete-fundo-branco.jpeg" alt="Boné Ariete preto" />
+                        </div>
+                    </div>
+                    <div class="pcard__body">
+                        <div class="pcard__toprow">
+                            <h3 class="pcard__name">Boné Ariete</h3>
+                            <span class="pcard__price">R$ 320</span>
+                        </div>
+                        <p class="pcard__colorline">Cor — <strong id="pcard-color">Rosa Ariete</strong></p>
+                        <div class="pcard__rating" aria-label="Avaliação 4 de 5, 128 avaliações">
+                            <span class="pcard__stars" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1l1.8 3.9 4.2.5-3.1 2.9.8 4.2L7 10.4l-3.7 2.1.8-4.2L1 5.4l4.2-.5z"/></svg>
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1l1.8 3.9 4.2.5-3.1 2.9.8 4.2L7 10.4l-3.7 2.1.8-4.2L1 5.4l4.2-.5z"/></svg>
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1l1.8 3.9 4.2.5-3.1 2.9.8 4.2L7 10.4l-3.7 2.1.8-4.2L1 5.4l4.2-.5z"/></svg>
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1l1.8 3.9 4.2.5-3.1 2.9.8 4.2L7 10.4l-3.7 2.1.8-4.2L1 5.4l4.2-.5z"/></svg>
+                                <svg class="star--empty" width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M7 1l1.8 3.9 4.2.5-3.1 2.9.8 4.2L7 10.4l-3.7 2.1.8-4.2L1 5.4l4.2-.5z"/></svg>
+                            </span>
+                            <span class="pcard__count">(128)</span>
+                        </div>
+                        <div class="pcard__bottomrow">
+                            <div class="pcard__swatches" role="radiogroup" aria-label="Escolher cor">
+                                <button class="swatch" data-color="rosa" role="radio" aria-checked="true" aria-label="Rosa Ariete" style="--sw: #EBA6B3;"></button>
+                                <button class="swatch" data-color="verde" role="radio" aria-checked="false" aria-label="Verde Imperial" style="--sw: #1B8A5F;"></button>
+                                <button class="swatch" data-color="preto" role="radio" aria-checked="false" aria-label="Carvão Noturno" style="--sw: #1d201f;"></button>
+                            </div>
+                            <button class="pcard__add" id="pcard-add">
+                                <span id="pcard-add-label">Adicionar</span>
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                                    <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="shop__info reveal delay-300">
+                    <p class="shop__lead">
+                        O Boné Ariete chega em três cores de série limitada, cada uma
+                        com o brasão do carneiro bordado à mão. Passe o cursor pelas
+                        cores e veja cada temperamento de perto.
+                    </p>
+                    <dl class="shop__specs reveal-children reveal delay-450">
+                        <div class="spec">
+                            <dt>Tecido</dt>
+                            <dd>Algodão premium 320g, lavagem suave</dd>
+                        </div>
+                        <div class="spec">
+                            <dt>Bordado</dt>
+                            <dd>Brasão Ariete em relevo, costura dupla</dd>
+                        </div>
+                        <div class="spec">
+                            <dt>Proteção</dt>
+                            <dd>UV 50+ · resistente a respingos</dd>
+                        </div>
+                        <div class="spec">
+                            <dt>Ajuste</dt>
+                            <dd>Fivela metálica gravada, tamanho único</dd>
+                        </div>
+                        <div class="spec">
+                            <dt>Série</dt>
+                            <dd>200 unidades numeradas por cor</dd>
+                        </div>
+                    </dl>
+                    <p class="shop__fig reveal delay-600">Fig. 02 — Drop 01 / Loja<br />Design, conforto e presença</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ============================================================
+             DOBRA 03 — TECNOLOGIA · dobra escura (doutrina AEX)
+             Anatomia interativa: miras na foto sincronizadas com a
+             lista técnica + métricas com contadores animados
+             ============================================================ -->
+        <section class="tech" id="tecnologia" data-header-dark>
+            <div class="tech__orb" aria-hidden="true"></div>
+            <div class="tech__inner">
+
+                <header class="tech__head reveal">
+                    <div class="eyebrow">
+                        <span class="eyebrow__line"></span>
+                        <span class="eyebrow__text">03 / Tecnologia — Construção</span>
+                    </div>
+                    <h2 class="tech__title">Anatomia de um <span class="outline-w">clássico</span></h2>
+                    <p class="tech__tagline">Cada detalhe tem um porquê.</p>
+                </header>
+
+                <div class="tech__grid">
+                    <!-- Traço HUD ligando a mira ativa ao conceito travado -->
+                    <svg class="tech__link" id="tech-link" aria-hidden="true">
+                        <defs>
+                            <mask id="tech-link-mask" maskUnits="userSpaceOnUse" x="-60" y="-60" width="3000" height="3000">
+                                <path id="tech-link-mask-path" d="" />
+                            </mask>
+                        </defs>
+                        <path id="tech-link-path" d="" mask="url(#tech-link-mask)" />
+                        <circle id="tech-link-end" r="3" cx="-20" cy="-20" />
+                    </svg>
+
+                    <!-- Palco: foto com miras numeradas -->
+                    <div class="tech__stage reveal delay-150">
+                        <div class="tech__plate">
+                            <span class="tech__plate-tag">Vista de estúdio</span>
+                            <img src="assets/media/chapeu-rosa-ariete-fundo-branco.jpeg" alt="Boné Ariete rosa em vista de estúdio, com pontos técnicos numerados" loading="lazy" />
+
+                            <button class="hs is-active" data-idx="1" style="left: 50%; top: 42%;" aria-label="Detalhe 1 — Brasão do carneiro">
+                                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                                    <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                                </svg>
+                                <span class="hs__n">01</span>
+                            </button>
+                            <button class="hs" data-idx="2" style="left: 69%; top: 24%;" aria-label="Detalhe 2 — Algodão 320g">
+                                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                                    <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                                </svg>
+                                <span class="hs__n">02</span>
+                            </button>
+                            <button class="hs" data-idx="3" style="left: 32%; top: 72%;" aria-label="Detalhe 3 — Aba pré-moldada">
+                                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                                    <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                                </svg>
+                                <span class="hs__n">03</span>
+                            </button>
+                            <button class="hs" data-idx="4" style="left: 76%; top: 56%;" aria-label="Detalhe 4 — Costura dupla">
+                                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true">
+                                    <path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                                </svg>
+                                <span class="hs__n">04</span>
+                            </button>
+                        </div>
+                        <p class="tech__stage-fig">Fig. 03 — Anatomia / Drop 01<br />Passe o cursor pelas miras ou pela lista</p>
+                    </div>
+
+                    <!-- Lista técnica sincronizada -->
+                    <div class="tech__list reveal delay-300">
+                        <button class="tech-item is-active" data-idx="1">
+                            <span class="tech-item__top">
+                                <span class="tech-item__idx">01</span>
+                                <span class="tech-item__name">Brasão do Carneiro</span>
+                            </span>
+                            <span class="tech-item__desc">Bordado em relevo com 8.400 pontos, aplicado um a um sobre o painel frontal. Nenhum brasão sai igual ao outro — <em>e é essa a intenção</em>.</span>
+                        </button>
+                        <button class="tech-item" data-idx="2">
+                            <span class="tech-item__top">
+                                <span class="tech-item__idx">02</span>
+                                <span class="tech-item__name">Algodão 320g</span>
+                            </span>
+                            <span class="tech-item__desc">Sarja penteada de fio longo com lavagem enzimática: toque macio desde o primeiro uso, sem precisar de tempo de quebra.</span>
+                        </button>
+                        <button class="tech-item" data-idx="3">
+                            <span class="tech-item__top">
+                                <span class="tech-item__idx">03</span>
+                                <span class="tech-item__name">Aba pré-moldada</span>
+                            </span>
+                            <span class="tech-item__desc">Curvada em seis costuras paralelas sobre núcleo de polietileno. Mantém o arco original mesmo depois da chuva — <em>a curva é para sempre</em>.</span>
+                        </button>
+                        <button class="tech-item" data-idx="4">
+                            <span class="tech-item__top">
+                                <span class="tech-item__idx">04</span>
+                                <span class="tech-item__name">Costura dupla</span>
+                            </span>
+                            <span class="tech-item__desc">Pesponto duplo nas oito linhas de tensão da copa. Construído para décadas, não para temporadas.</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Métricas com contadores -->
+                <div class="tech__metrics reveal-children reveal">
+                    <div class="metric">
+                        <span class="metric__num" data-count="320">0</span><span class="metric__suffix">g/m²</span>
+                        <span class="metric__label">Gramatura do algodão</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric__num" data-count="8400">0</span><span class="metric__suffix">pts</span>
+                        <span class="metric__label">Pontos de bordado</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric__num" data-count="50">0</span><span class="metric__suffix">UV+</span>
+                        <span class="metric__label">Fator de proteção</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric__num" data-count="200">0</span><span class="metric__suffix">un</span>
+                        <span class="metric__label">Numeradas por cor</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ============================================================
+             DOBRA 04 — ATELIÊ · construa o seu boné
+             hue-rotate + saturate recolorem só o tecido: o brasão
+             preto/branco e o fundo de estúdio permanecem intactos
+             ============================================================ -->
+        <section class="atelier" id="atelie">
+            <div class="atelier__inner">
+                <header class="atelier__head reveal">
+                    <div class="eyebrow">
+                        <span class="eyebrow__line"></span>
+                        <span class="eyebrow__text">04 / Ateliê — Edição única</span>
+                    </div>
+                    <h2 class="atelier__title">Construa o <span class="text-outline">seu</span> boné</h2>
+                    <p class="atelier__tagline">A cor é sua. O brasão é nosso.</p>
+                </header>
+
+                <div class="atelier__grid">
+                    <!-- Placa de estúdio com pré-visualização ao vivo -->
+                    <div class="atelier__stage reveal delay-150">
+                        <div class="atelier__plate">
+                            <span class="atelier__plate-tag">Pré-visualização ao vivo</span>
+                            <img id="atelier-img" src="assets/media/chapeu-rosa-ariete-fundo-branco.jpeg" alt="Boné Ariete na cor personalizada escolhida por você" loading="lazy" />
+                        </div>
+                        <p class="atelier__fig">Fig. 04 — Ateliê / Edição única<br />O brasão permanece preto e branco</p>
+                    </div>
+
+                    <!-- Painel de controles -->
+                    <div class="atelier__panel reveal delay-300">
+                        <div class="ctl">
+                            <div class="ctl__head">
+                                <label class="ctl__label" for="ctl-hue">Cor</label>
+                                <span class="ctl__val" id="ctl-hue-val">0°</span>
+                            </div>
+                            <input class="ctl__range ctl__range--hue" id="ctl-hue" type="range" min="0" max="360" step="1" value="0" />
+                        </div>
+                        <div class="ctl">
+                            <div class="ctl__head">
+                                <label class="ctl__label" for="ctl-sat">Intensidade</label>
+                                <span class="ctl__val" id="ctl-sat-val">100%</span>
+                            </div>
+                            <input class="ctl__range" id="ctl-sat" type="range" min="40" max="170" step="1" value="100" />
+                        </div>
+
+                        <div class="atelier__presets" role="group" aria-label="Cores oficiais do Drop 01">
+                            <button class="preset-chip is-on" data-hue="0" data-sat="100">
+                                <span class="dot" style="--sw: #EBA6B3;" aria-hidden="true"></span>Rosa Ariete
+                            </button>
+                            <button class="preset-chip" data-hue="162" data-sat="115">
+                                <span class="dot" style="--sw: #1B8A5F;" aria-hidden="true"></span>Verde Imperial
+                            </button>
+                            <button class="preset-chip" data-hue="222" data-sat="64">
+                                <span class="dot" style="--sw: #8AA4BD;" aria-hidden="true"></span>Aço Glacial
+                            </button>
+                        </div>
+
+                        <div class="atelier__result" aria-live="polite">
+                            <span class="atelier__swatch" id="atelier-swatch" aria-hidden="true"></span>
+                            <div>
+                                <span class="atelier__cname" id="atelier-cname">Rosa Ariete</span>
+                                <span class="atelier__cmeta" id="atelier-cmeta">HUE 350° · SAT 60%</span>
+                            </div>
+                            <span class="atelier__price">R$ 380</span>
+                        </div>
+
+                        <div class="atelier__actions">
+                            <button class="btn btn--primary magnetic" id="atelier-add">
+                                <span id="atelier-add-label">Adicionar o meu</span>
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                                    <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="atelier__note">Bordado à mão · 1 unidade · entrega em 4 semanas</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             DOBRA 05 — COMPRE JÁ · última chamada do Drop 01
+             ============================================================ -->
+        <section class="buy" id="comprar">
+            <div class="buy__inner">
+                <header class="reveal">
+                    <div class="eyebrow">
+                        <span class="eyebrow__line"></span>
+                        <span class="eyebrow__text">05 / Drop 01 — Última chamada</span>
+                        <span class="eyebrow__line"></span>
+                    </div>
+                    <h2 class="buy__title">
+                        Compre já<br />
+                        <span class="text-outline">o seu boné</span><br />
+                        Ariete<span class="dot">.</span>
+                    </h2>
+                    <p class="buy__tagline">Quando acabar, acabou — cada cor morre nas 200 unidades.</p>
+                </header>
+
+                <!-- Estoque por cor -->
+                <div class="stock reveal-children reveal delay-150" aria-label="Disponibilidade por cor">
+                    <div class="stock__row">
+                        <span class="stock__dot" style="--sw: #EBA6B3;" aria-hidden="true"></span>
+                        <span class="stock__name">Rosa Ariete</span>
+                        <span class="stock__bar"><span class="stock__fill" style="--w: 19%;"></span></span>
+                        <span class="stock__left">restam <strong>38</strong> / 200</span>
+                    </div>
+                    <div class="stock__row">
+                        <span class="stock__dot" style="--sw: #1B8A5F;" aria-hidden="true"></span>
+                        <span class="stock__name">Verde Imperial</span>
+                        <span class="stock__bar"><span class="stock__fill" style="--w: 40%;"></span></span>
+                        <span class="stock__left">restam <strong>81</strong> / 200</span>
+                    </div>
+                    <div class="stock__row">
+                        <span class="stock__dot" style="--sw: #1d201f;" aria-hidden="true"></span>
+                        <span class="stock__name">Carvão Noturno</span>
+                        <span class="stock__bar"><span class="stock__fill" style="--w: 6%;"></span></span>
+                        <span class="stock__left">restam <strong>12</strong> / 200</span>
+                    </div>
+                </div>
+
+                <div class="buy__actions reveal delay-300">
+                    <button class="btn btn--primary magnetic" id="buy-cta">
+                        <span id="buy-cta-label">Comprar agora</span>
+                        <span class="buy__price">R$ 320</span>
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <a class="btn btn--ghost magnetic" href="#tecnologia">Ver a construção</a>
+                </div>
+
+                <p class="buy__note reveal delay-300">
+                    <span>Frete grátis Brasil</span>
+                    <span class="sep" aria-hidden="true"></span>
+                    <span>Troca em até 30 dias</span>
+                    <span class="sep" aria-hidden="true"></span>
+                    <span>Certificado numerado incluso</span>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================================
+         RODAPÉ — carvão com borda de aço
+         ============================================================ -->
+    <footer class="site-footer" data-header-dark>
+        <div class="footer__inner reveal">
+            <div class="footer__top">
+                <div class="footer__brand">
+                    <div class="footer__brand-row">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <rect x="8" y="0.8" width="10.2" height="10.2" transform="rotate(45 8 0.8)" stroke="#8AA4BD" stroke-width="1.4" />
+                            <circle cx="8" cy="8" r="1.6" fill="#fff" />
+                        </svg>
+                        <span class="footer__brand-name">Ariete</span>
+                        <span class="brand__chip" style="color: rgba(237,240,238,0.55); border-color: rgba(255,255,255,0.2);">Drop 01</span>
+                    </div>
+                    <p class="footer__lede">
+                        Bonés de série limitada, desenhados e bordados no Brasil.
+                        Entre para o radar e saiba do Drop 02 antes de todo mundo.
+                    </p>
+                    <form class="footer__news" id="footer-news">
+                        <input class="footer__input" type="email" required placeholder="Seu e-mail" aria-label="Seu e-mail" />
+                        <button class="footer__send" type="submit" id="footer-send">Entrar no radar</button>
+                    </form>
+                </div>
+                <span class="footer__mark" aria-hidden="true">Ariete®</span>
+            </div>
+
+            <div class="footer__bottom reveal delay-150">
+                <p class="footer__copy">© 2026 Ariete — Drop 01 · Design, conforto e presença</p>
+                <nav class="footer__links" aria-label="Navegação do rodapé">
+                    <a href="#produto">Produto</a>
+                    <a href="#tecnologia">Tecnologia</a>
+                    <a href="#atelie">Ateliê</a>
+                    <a href="#comprar">Comprar</a>
+                </nav>
+                <button class="to-top" id="to-top" aria-label="Voltar ao topo">
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+                        <path d="M6.5 11V2M2.5 5.5 6.5 1.5l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <noscript>
+        <style>
+            .hero { height: 100vh; }
+            .hero__veil { display: none; }
+            .hero__final { display: none; }
+            .reveal, .reveal-children > * {
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+            }
+        </style>
+    </noscript>
+
+    <!-- GSAP + ScrollTrigger (CDN) — com fallback em JS puro abaixo -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+
+    <script>
+        (function () {
+            'use strict';
+
+            // Experiência scrubbed sempre começa do início — sem restauração
+            // de scroll (evita o Lenis re-animar para a posição pré-reload)
+            if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+            window.scrollTo(0, 0);
+
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const hero = document.getElementById('hero');
+            const video = document.getElementById('hero-video');
+            const videoDark = document.getElementById('hero-video-dark');
+            const veil = document.getElementById('hero-veil');
+            const timecodeEl = document.getElementById('timecode');
+            const railFill = document.getElementById('rail-fill');
+            const progressBar = document.getElementById('scroll-progress');
+            const fallbackImg = document.querySelector('.hero__fallback');
+            const ovFeather = document.getElementById('ov-feather');
+            const sideBrand = document.getElementById('side-brand');
+            const hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
+
+            /* ------------------------------------------------------------
+               Tema claro/escuro — cada tema tem seu vídeo (mesmo corte,
+               estúdio branco/preto), trocados com crossfade e sincronizados
+               no mesmo ponto da timeline.
+               ------------------------------------------------------------ */
+            const isDark = () => document.documentElement.classList.contains('dark');
+            const activeVideo = () =>
+                (isDark() && videoDark && !videoDark.error && !hero.classList.contains('dark-video-failed'))
+                    ? videoDark : video;
+
+            const lightToggle = document.getElementById('light-toggle');
+            lightToggle.setAttribute('aria-pressed', String(isDark()));
+
+            function setTheme(dark) {
+                const from = activeVideo();
+                document.documentElement.classList.toggle('dark', dark);
+                const to = activeVideo();
+                // sincroniza o novo vídeo no mesmo instante antes do crossfade
+                if (to !== from && to.readyState >= 1) {
+                    const d = to.duration || 8;
+                    try { to.currentTime = Math.min(from.currentTime || 0, d - 0.05); } catch (e) { }
+                }
+                lightToggle.setAttribute('aria-pressed', String(dark));
+                try { localStorage.setItem('ariete-theme', dark ? 'dark' : 'light'); } catch (e) { }
+                // em movimento reduzido, o vídeo ativo roda em loop e o outro pausa
+                if (reduceMotion) {
+                    [video, videoDark].forEach((v) => {
+                        if (!v) return;
+                        v.loop = v === to;
+                        if (v === to) v.play().catch(() => { });
+                        else v.pause();
+                    });
+                }
+                updateHeaderContrast();
+            }
+            lightToggle.addEventListener('click', () => setTheme(!isDark()));
+            if (videoDark) {
+                const darkSources = videoDark.querySelectorAll('source');
+                darkSources[darkSources.length - 1].addEventListener('error', () => {
+                    hero.classList.add('dark-video-failed');
+                });
+            }
+
+            /* ------------------------------------------------------------
+               Header — contraste sobre dobras escuras (modo claro)
+               ------------------------------------------------------------ */
+            const siteHeader = document.querySelector('.site-header');
+            const headerDarkZones = document.querySelectorAll('[data-header-dark]');
+
+            function updateHeaderContrast() {
+                if (!siteHeader) return;
+                if (isDark()) {
+                    siteHeader.classList.remove('is-over-dark');
+                    return;
+                }
+                const probeY = siteHeader.getBoundingClientRect().height * 0.55;
+                let onDark = false;
+                headerDarkZones.forEach((zone) => {
+                    const r = zone.getBoundingClientRect();
+                    if (probeY >= r.top && probeY <= r.bottom) onDark = true;
+                });
+                siteHeader.classList.toggle('is-over-dark', onDark);
+            }
+            window.addEventListener('scroll', updateHeaderContrast, { passive: true });
+            window.addEventListener('resize', updateHeaderContrast);
+            updateHeaderContrast();
+
+            /* ------------------------------------------------------------
+               Envelope de escala do vídeo (compartilhado GSAP + fallback).
+               Em ≥701px o vídeo é object-fit: contain (quadro inteiro visível).
+               A escala segue um sino: contain (1×) nas pontas — abertura com o
+               boné menor e frame final com gato + boné inteiros, lendo como
+               tela cheia sobre o branco — e cresce até cobrir a tela (coverScale)
+               no pico, para os closes cinematográficos do meio.
+               ------------------------------------------------------------ */
+            const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
+            const smooth = (t) => t * t * (3 - 2 * t);
+            const PEAK_IN = 0.40;    // sobe até o pico (close do bordado)
+            const PEAK_OUT = 0.54;   // começa a recuar, revelando o quadro
+            const SHIFT_FRAC = 0.06; // deslocamento à direita só na abertura
+            const SHIFT_END = 0.26;
+            const desktopMQ = window.matchMedia('(min-width: 701px)');
+            const feLeft = ovFeather.querySelector('.fe--left');
+            const feRight = ovFeather.querySelector('.fe--right');
+            const feTop = ovFeather.querySelector('.fe--top');
+            const feBottom = ovFeather.querySelector('.fe--bottom');
+
+            // escala mínima para o quadro contido cobrir a viewport inteira
+            let coverScale = 16 / 9;
+            let vidRatio = 16 / 9;
+            let maxScroll = 1;
+            function recomputeMetrics() {
+                vidRatio = (video.videoWidth && video.videoHeight)
+                    ? video.videoWidth / video.videoHeight : 16 / 9;
+                const rw = window.innerWidth / window.innerHeight;
+                coverScale = Math.max(rw / vidRatio, vidRatio / rw) * 1.04;
+                // o scrub completa no fim da pista da hero, não do documento
+                maxScroll = Math.max(hero.offsetHeight - window.innerHeight, 1);
+            }
+            recomputeMetrics();
+            window.addEventListener('resize', recomputeMetrics);
+            window.addEventListener('load', recomputeMetrics);
+            video.addEventListener('loadedmetadata', recomputeMetrics);
+
+            function envFor(p) {
+                if (p <= PEAK_IN) return smooth(clamp01(p / PEAK_IN));
+                if (p >= PEAK_OUT) return 1 - smooth(clamp01((p - PEAK_OUT) / (1 - PEAK_OUT)));
+                return 1; // platô no pico
+            }
+            // aplica escala + deslocamento + feather ao vídeo (e à imagem fallback)
+            function applyVideo(p) {
+                if (!desktopMQ.matches) {
+                    video.style.transform = '';
+                    if (videoDark) videoDark.style.transform = '';
+                    fallbackImg.style.transform = '';
+                    ovFeather.style.opacity = '0';
+                    return;
+                }
+                const env = envFor(p);
+                const s = 1 + (coverScale - 1) * env;
+                const tx = window.innerWidth * SHIFT_FRAC * (1 - smooth(clamp01(p / SHIFT_END)));
+                const tf = 'translateX(' + tx.toFixed(2) + 'px) scale(' + s.toFixed(4) + ')';
+                video.style.transform = tf;
+                if (videoDark) videoDark.style.transform = tf;
+                fallbackImg.style.transform = tf;
+                ovFeather.style.opacity = (1 - env).toFixed(3);
+
+                // tiras de feather abraçando as bordas reais do quadro contido
+                const vw = window.innerWidth, vh = window.innerHeight;
+                const dw = Math.min(vw, vh * vidRatio), dh = dw / vidRatio;
+                const F = 130; // alcance do fade para dentro do quadro
+                const left = vw / 2 + tx - (dw * s) / 2;
+                const right = vw / 2 + tx + (dw * s) / 2;
+                const top = vh / 2 - (dh * s) / 2;
+                const bottom = vh / 2 + (dh * s) / 2;
+                feLeft.style.width = (left > 1 ? left + F : 0) + 'px';
+                feRight.style.width = (vw - right > 1 ? (vw - right) + F : 0) + 'px';
+                feTop.style.height = (top > 1 ? top + F : 0) + 'px';
+                feBottom.style.height = (vh - bottom > 1 ? (vh - bottom) + F : 0) + 'px';
+            }
+
+            /* ------------------------------------------------------------
+               Dobra 02 — reveal on scroll + card de produto
+               (antes do retorno de movimento reduzido: funciona em ambos)
+               ------------------------------------------------------------ */
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('active');
+                    io.unobserve(entry.target);
+                });
+            }, { threshold: 0.08 });
+            document.querySelectorAll('.reveal, .reveal-children').forEach((el) => io.observe(el));
+
+            const pcard = document.getElementById('pcard');
+            if (pcard) {
+                const imgs = pcard.querySelectorAll('.pcard__imgs img');
+                const swatches = pcard.querySelectorAll('.swatch');
+                const colorNameEl = document.getElementById('pcard-color');
+                const colorNames = { rosa: 'Rosa Ariete', verde: 'Verde Imperial', preto: 'Carvão Noturno' };
+                const colorHex = { rosa: '#EBA6B3', verde: '#1B8A5F', preto: '#1d201f' };
+                const colorOrder = ['rosa', 'verde', 'preto'];
+                let selectedColor = 'rosa';
+
+                /* pilha viva: as cartas de baixo são sempre as duas cores
+                   que NÃO estão no topo */
+                const deck = document.querySelector('.pcard-deck');
+                const deckCards = deck ? Array.from(deck.querySelectorAll('.deck-card')) : [];
+                function setDeckColors(activeColor) {
+                    const rest = colorOrder.filter((c) => c !== activeColor);
+                    deckCards.forEach((dc, i) => {
+                        const c = rest[i % rest.length];
+                        dc.dataset.color = c;
+                        dc.style.setProperty('--deck-c', colorHex[c]);
+                    });
+                }
+                setDeckColors(selectedColor);
+
+                function showColor(color) {
+                    imgs.forEach((img) => img.classList.toggle('is-active', img.dataset.color === color));
+                    if (colorNameEl) colorNameEl.textContent = colorNames[color] || color;
+                }
+
+                swatches.forEach((sw) => {
+                    // hover/foco apenas pré-visualiza; clique seleciona
+                    sw.addEventListener('mouseenter', () => showColor(sw.dataset.color));
+                    sw.addEventListener('focus', () => showColor(sw.dataset.color));
+                    sw.addEventListener('click', () => {
+                        selectedColor = sw.dataset.color;
+                        swatches.forEach((s) => s.setAttribute('aria-checked', String(s === sw)));
+                        showColor(selectedColor);
+                        setDeckColors(selectedColor);
+                    });
+                });
+                pcard.querySelector('.pcard__swatches').addEventListener('mouseleave', () => showColor(selectedColor));
+
+                const fav = pcard.querySelector('.pcard__fav');
+                fav.addEventListener('click', () => {
+                    const on = fav.getAttribute('aria-pressed') !== 'true';
+                    fav.setAttribute('aria-pressed', String(on));
+                    fav.querySelector('path').setAttribute('fill-opacity', on ? '1' : '0');
+                });
+
+                const addBtn = document.getElementById('pcard-add');
+                const addLabel = document.getElementById('pcard-add-label');
+                let addTimer = null;
+                addBtn.addEventListener('click', () => {
+                    addBtn.classList.add('is-added');
+                    addLabel.textContent = 'Adicionado ✓';
+                    clearTimeout(addTimer);
+                    addTimer = setTimeout(() => {
+                        addBtn.classList.remove('is-added');
+                        addLabel.textContent = 'Adicionar';
+                    }, 1600);
+                });
+            }
+
+            /* ------------------------------------------------------------
+               Dobra 03 — anatomia interativa + contadores
+               ------------------------------------------------------------ */
+            const tech = document.getElementById('tecnologia');
+            if (tech) {
+                const spots = Array.from(tech.querySelectorAll('.hs'));
+                const items = Array.from(tech.querySelectorAll('.tech-item'));
+
+                const techGrid = tech.querySelector('.tech__grid');
+                const linkSvg = document.getElementById('tech-link');
+                const linkPath = document.getElementById('tech-link-path');
+                const linkMaskPath = document.getElementById('tech-link-mask-path');
+                const linkEnd = document.getElementById('tech-link-end');
+                let lockedIdx = '1';        // conceito travado por clique
+                let lockedFromSpot = true;  // origem da trava (mira ou conceito)
+                let shownIdx = '1';         // o que está visível agora
+                let revealAnim = null;
+
+                // (re)posiciona o traço; retorna false se não há linha (mobile)
+                function drawLink(idx) {
+                    const spot = spots.find((s) => s.dataset.idx === idx);
+                    const item = items.find((i) => i.dataset.idx === idx);
+                    const base = linkSvg.getBoundingClientRect();
+                    // largura 0 = .tech__link em display:none (mobile/empilhado)
+                    if (!spot || !item || base.width === 0) { linkSvg.classList.remove('is-on'); return false; }
+                    const a = spot.getBoundingClientRect();
+                    const b = item.getBoundingClientRect();
+                    const x1 = a.left + a.width / 2 - base.left;
+                    const y1 = a.top + a.height / 2 - base.top;
+                    const x2 = b.left - base.left;
+                    const y2 = b.top + b.height / 2 - base.top;
+                    const cx = x1 + (x2 - x1) * 0.5;
+                    const dStr = 'M ' + x1.toFixed(1) + ' ' + y1.toFixed(1) +
+                        ' C ' + cx.toFixed(1) + ' ' + y1.toFixed(1) + ', ' +
+                        cx.toFixed(1) + ' ' + y2.toFixed(1) + ', ' +
+                        x2.toFixed(1) + ' ' + y2.toFixed(1);
+                    linkPath.setAttribute('d', dStr);
+                    linkMaskPath.setAttribute('d', dStr);   // a máscara acompanha o traço
+                    linkEnd.setAttribute('cx', x2.toFixed(1));
+                    linkEnd.setAttribute('cy', y2.toFixed(1));
+                    linkSvg.classList.add('is-on');
+                    return true;
+                }
+
+                // desenha o traço progressivamente, na direção do elemento apontado:
+                // fromSpot=true  → cresce da mira para o conceito (bolinha → card)
+                // fromSpot=false → cresce do conceito para a mira (card → bolinha)
+                function revealLink(idx, fromSpot) {
+                    if (!drawLink(idx)) return;
+                    if (revealAnim) revealAnim.cancel();
+                    // máscara sólida = revela a linha inteira (estado de repouso)
+                    if (reduceMotion) { linkMaskPath.style.strokeDasharray = ''; linkMaskPath.style.strokeDashoffset = ''; return; }
+                    const L = linkMaskPath.getTotalLength();
+                    // a máscara (traço sólido) cresce e revela o tracejado por baixo.
+                    // O path visível segue sempre pontilhado com os pontos fluindo.
+                    linkMaskPath.style.strokeDasharray = L;
+                    revealAnim = linkMaskPath.animate(
+                        [{ strokeDashoffset: fromSpot ? L : -L }, { strokeDashoffset: 0 }],
+                        { duration: 1500, easing: 'cubic-bezier(0.65, 0, 0.35, 1)' }
+                    );
+                    revealAnim.onfinish = () => {
+                        // máscara totalmente aberta — revela o traço inteiro
+                        linkMaskPath.style.strokeDasharray = '';
+                        linkMaskPath.style.strokeDashoffset = '';
+                    };
+                }
+
+                function setTechActive(idx, fromSpot) {
+                    shownIdx = idx;
+                    spots.forEach((s) => s.classList.toggle('is-active', s.dataset.idx === idx));
+                    items.forEach((it) => it.classList.toggle('is-active', it.dataset.idx === idx));
+                    revealLink(idx, fromSpot);
+                }
+
+                // clique trava (guardando a direção); hover pré-visualiza; sair restaura.
+                // .hs = mira (fromSpot true) · .tech-item = conceito (fromSpot false)
+                spots.forEach((el) => {
+                    el.addEventListener('mouseenter', () => setTechActive(el.dataset.idx, true));
+                    el.addEventListener('focus', () => setTechActive(el.dataset.idx, true));
+                    el.addEventListener('click', () => { lockedIdx = el.dataset.idx; lockedFromSpot = true; setTechActive(lockedIdx, true); });
+                });
+                items.forEach((el) => {
+                    el.addEventListener('mouseenter', () => setTechActive(el.dataset.idx, false));
+                    el.addEventListener('focus', () => setTechActive(el.dataset.idx, false));
+                    el.addEventListener('click', () => { lockedIdx = el.dataset.idx; lockedFromSpot = false; setTechActive(lockedIdx, false); });
+                });
+                techGrid.addEventListener('mouseleave', () => setTechActive(lockedIdx, lockedFromSpot));
+
+                // o palco é sticky → reposiciona o traço enquanto a cena se move
+                // (só reposiciona, sem re-desenhar a animação de entrada)
+                let techVisible = false, linkRaf = null, firstReveal = true;
+                function scheduleLink() {
+                    if (linkRaf || !techVisible) return;
+                    linkRaf = requestAnimationFrame(() => { linkRaf = null; drawLink(shownIdx); });
+                }
+                window.addEventListener('scroll', scheduleLink, { passive: true });
+                window.addEventListener('resize', scheduleLink);
+                const techPlateImg = tech.querySelector('.tech__plate img');
+                if (techPlateImg && !techPlateImg.complete) {
+                    techPlateImg.addEventListener('load', () => drawLink(shownIdx));
+                }
+                new IntersectionObserver((ents) => {
+                    ents.forEach((e) => {
+                        techVisible = e.isIntersecting;
+                        if (!e.isIntersecting) return;
+                        // primeira vez em cena: desenha com animação; depois só reposiciona
+                        if (firstReveal) { firstReveal = false; revealLink(shownIdx, lockedFromSpot); }
+                        else drawLink(shownIdx);
+                    });
+                }, { threshold: 0 }).observe(tech);
+
+                // lanterna: o brilho radial segue o cursor (só ponteiro fino)
+                if (window.matchMedia('(pointer: fine)').matches) {
+                    items.forEach((card) => {
+                        card.addEventListener('mousemove', (e) => {
+                            const r = card.getBoundingClientRect();
+                            card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+                            card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+                        });
+                    });
+                }
+
+                // contadores: sobem com easing quando entram em cena
+                const fmtCount = (n) => n.toLocaleString('pt-BR');
+                function animateCount(el) {
+                    const target = parseInt(el.dataset.count, 10);
+                    if (reduceMotion) { el.textContent = fmtCount(target); return; }
+                    const t0 = performance.now();
+                    const dur = 1500;
+                    function step(now) {
+                        const p = Math.min((now - t0) / dur, 1);
+                        const eased = 1 - Math.pow(1 - p, 3);
+                        el.textContent = fmtCount(Math.round(target * eased));
+                        if (p < 1) requestAnimationFrame(step);
+                    }
+                    requestAnimationFrame(step);
+                }
+                const counterIO = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+                        animateCount(entry.target);
+                        counterIO.unobserve(entry.target);
+                    });
+                }, { threshold: 0.6 });
+                tech.querySelectorAll('[data-count]').forEach((el) => counterIO.observe(el));
+            }
+
+            /* ------------------------------------------------------------
+               Dobra 04 — Ateliê: recoloração ao vivo da foto
+               hue-rotate/saturate preservam neutros (brasão e fundo)
+               ------------------------------------------------------------ */
+            const atelier = document.getElementById('atelie');
+            if (atelier) {
+                const aImg = document.getElementById('atelier-img');
+                const hueIn = document.getElementById('ctl-hue');
+                const satIn = document.getElementById('ctl-sat');
+                const hueVal = document.getElementById('ctl-hue-val');
+                const satVal = document.getElementById('ctl-sat-val');
+                const aSwatch = document.getElementById('atelier-swatch');
+                const aName = document.getElementById('atelier-cname');
+                const aMeta = document.getElementById('atelier-cmeta');
+                const aChips = Array.from(atelier.querySelectorAll('.preset-chip'));
+
+                // tecido rosa da foto original, em HSL aproximado
+                const BASE_H = 350, BASE_S = 60, BASE_L = 73;
+
+                // nomes editoriais por faixa de matiz resultante
+                const HUE_NAMES = [
+                    [20, 'Vermelho Drop'], [45, 'Coral de Estúdio'], [70, 'Âmbar Deserto'],
+                    [100, 'Lima Alpina'], [140, 'Verde Cobalto'], [175, 'Verde Imperial'],
+                    [205, 'Jade Glacial'], [240, 'Aço Glacial'], [270, 'Índigo Noturno'],
+                    [300, 'Violeta Carvão'], [330, 'Magenta Drop'], [344, 'Rosa Choque'],
+                    [360, 'Rosa Ariete']
+                ];
+
+                function applyAtelier() {
+                    const h = +hueIn.value;
+                    const s = +satIn.value;
+                    aImg.style.setProperty('--hue', h + 'deg');
+                    aImg.style.setProperty('--sat', s + '%');
+                    hueVal.textContent = h + '°';
+                    satVal.textContent = s + '%';
+
+                    // cor resultante: matiz girado + saturação multiplicada
+                    const outH = (BASE_H + h) % 360;
+                    const outS = Math.min(Math.round(BASE_S * s / 100), 100);
+                    aSwatch.style.setProperty('--c', 'hsl(' + outH + ', ' + outS + '%, ' + BASE_L + '%)');
+                    aMeta.textContent = 'HUE ' + outH + '° · SAT ' + outS + '%';
+
+                    let name;
+                    if (outS < 26) name = 'Névoa Granito';
+                    else name = HUE_NAMES.find((pair) => outH <= pair[0])[1];
+                    aName.textContent = name;
+
+                    // chip aceso só quando os valores batem com o preset
+                    aChips.forEach((c) =>
+                        c.classList.toggle('is-on', +c.dataset.hue === h && +c.dataset.sat === s));
+                }
+                hueIn.addEventListener('input', applyAtelier);
+                satIn.addEventListener('input', applyAtelier);
+                aChips.forEach((c) => {
+                    c.addEventListener('click', () => {
+                        hueIn.value = c.dataset.hue;
+                        satIn.value = c.dataset.sat;
+                        applyAtelier();
+                    });
+                });
+                applyAtelier();
+
+                const aAdd = document.getElementById('atelier-add');
+                const aAddLabel = document.getElementById('atelier-add-label');
+                let aTimer = null;
+                aAdd.addEventListener('click', () => {
+                    aAddLabel.textContent = 'Reservado ✓';
+                    clearTimeout(aTimer);
+                    aTimer = setTimeout(() => { aAddLabel.textContent = 'Adicionar o meu'; }, 2000);
+                });
+            }
+
+            /* ------------------------------------------------------------
+               Dobra 05 + rodapé: CTA, newsletter e voltar ao topo
+               ------------------------------------------------------------ */
+            const buyCta = document.getElementById('buy-cta');
+            if (buyCta) {
+                const buyLabel = document.getElementById('buy-cta-label');
+                let buyTimer = null;
+                buyCta.addEventListener('click', () => {
+                    buyLabel.textContent = 'Reservado ✓';
+                    clearTimeout(buyTimer);
+                    buyTimer = setTimeout(() => { buyLabel.textContent = 'Comprar agora'; }, 2000);
+                });
+            }
+
+            const newsForm = document.getElementById('footer-news');
+            if (newsForm) {
+                const sendBtn = document.getElementById('footer-send');
+                newsForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    sendBtn.classList.add('is-sent');
+                    sendBtn.textContent = 'No radar ✓';
+                    newsForm.querySelector('input').value = '';
+                });
+            }
+
+            const toTop = document.getElementById('to-top');
+            if (toTop) {
+                toTop.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+                });
+            }
+
+            /* ------------------------------------------------------------
+               Âncoras internas — rolagem lenta (header, CTAs, rodapé)
+               ------------------------------------------------------------ */
+            function slowScrollTo(targetY, duration) {
+                const startY = window.scrollY;
+                const dist = targetY - startY;
+                const t0 = performance.now();
+                const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                function step(now) {
+                    const p = Math.min((now - t0) / duration, 1);
+                    window.scrollTo(0, startY + dist * easeInOut(p));
+                    updateHeaderContrast();
+                    if (p < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            }
+
+            function bindSlowAnchor(link, duration) {
+                link.addEventListener('click', (e) => {
+                    const id = link.getAttribute('href').slice(1);
+                    if (!id) return;
+                    const target = document.getElementById(id);
+                    if (!target) return;
+                    e.preventDefault();
+                    if (reduceMotion) {
+                        target.scrollIntoView();
+                        updateHeaderContrast();
+                        return;
+                    }
+                    slowScrollTo(target.getBoundingClientRect().top + window.scrollY, duration);
+                });
+            }
+
+            document.querySelectorAll('.site-nav a[href^="#"]').forEach((link) => {
+                bindSlowAnchor(link, 1800);
+            });
+            document.querySelectorAll('.buy__actions a[href^="#"], .footer__links a[href^="#"]').forEach((link) => {
+                bindSlowAnchor(link, 1800);
+            });
+
+            /* ------------------------------------------------------------
+               Vídeo: estados de prontidão e fallback
+               ------------------------------------------------------------ */
+            let videoReady = false;
+
+            function markReady() {
+                if (videoReady) return;
+                videoReady = true;
+                hero.classList.add('is-ready');
+            }
+
+            const checkReady = () => { if (activeVideo().readyState >= 2) markReady(); };
+            [video, videoDark].forEach((v) => {
+                if (!v) return;
+                v.addEventListener('loadeddata', checkReady);
+                v.addEventListener('canplay', checkReady);
+            });
+            // metadados já em cache (recargas)
+            checkReady();
+
+            function showFallback() {
+                hero.classList.add('is-fallback', 'is-ready');
+                document.querySelector('.bottom__tc')?.style.setProperty('display', 'none');
+            }
+            video.addEventListener('error', showFallback);
+            const sources = video.querySelectorAll('source');
+            sources[sources.length - 1].addEventListener('error', showFallback);
+
+            // Segurança: se nada carregar em 8s, não prende o usuário no véu
+            setTimeout(() => { if (!videoReady) hero.classList.add('is-ready'); }, 8000);
+
+            /* ------------------------------------------------------------
+               Movimento reduzido: hero estática, vídeo em loop suave
+               ------------------------------------------------------------ */
+            if (reduceMotion) {
+                const av = activeVideo();
+                av.loop = true;
+                const tryPlay = () => av.play().catch(() => { /* mantém primeiro frame */ });
+                if (av.readyState >= 2) tryPlay();
+                else av.addEventListener('canplay', tryPlay, { once: true });
+                return;
+            }
+
+            /* ------------------------------------------------------------
+               Scrub do vídeo: alvo definido pelo scroll, suavizado por lerp
+               ------------------------------------------------------------ */
+            let targetP = 0;   // progresso vindo do scroll (0–1)
+            let displayP = 0;  // progresso suavizado aplicado ao vídeo
+            let lastTick = performance.now();
+
+            function formatTimecode(seconds) {
+                const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+                const s = String(Math.floor(seconds % 60)).padStart(2, '0');
+                const f = String(Math.floor((seconds % 1) * 30)).padStart(2, '0');
+                return m + ':' + s + ':' + f;
+            }
+
+            function tick(now) {
+                const dt = Math.min((now - lastTick) / 1000, 0.1);
+                lastTick = now;
+                // alvo lido direto da posição de scroll — robusto a qualquer
+                // origem do movimento (Lenis, nativo, teclado) e imune a
+                // dessincronização de eventos
+                targetP = clamp01(window.scrollY / maxScroll);
+                // lerp independente de frame-rate, com snap ao chegar perto —
+                // evita micro-atualizações perpétuas quando o scroll está parado
+                displayP += (targetP - displayP) * (1 - Math.pow(0.0001, dt));
+                if (Math.abs(targetP - displayP) < 0.0004) displayP = targetP;
+
+                // scrub no vídeo do tema ativo (claro ou escuro)
+                const av = activeVideo();
+                const dur = av.duration;
+                if (!hero.classList.contains('is-fallback') && dur && av.readyState >= 2 && !av.seeking) {
+                    const t = Math.min(displayP, 0.9995) * dur;
+                    // limiar = 1 frame a 30fps: evita seeks redundantes no mesmo frame
+                    if (Math.abs(av.currentTime - t) > 0.033) av.currentTime = t;
+                }
+                if (timecodeEl && dur) timecodeEl.textContent = formatTimecode(displayP * dur);
+                if (railFill) railFill.style.height = (displayP * 100) + '%';
+                // barra do topo: progresso de leitura do documento inteiro
+                if (progressBar) {
+                    const docMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+                    progressBar.style.transform = 'scaleX(' + clamp01(window.scrollY / docMax) + ')';
+                }
+
+                // escala/feather do vídeo seguem o progresso suavizado
+                applyVideo(displayP);
+                // marca lateral some no clímax, cedendo lugar ao lockup final
+                if (sideBrand) sideBrand.style.opacity = clamp01(1 - (displayP - 0.74) / 0.08).toFixed(3);
+
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+
+            /* ------------------------------------------------------------
+               Caminho principal: Lenis + GSAP ScrollTrigger
+               ------------------------------------------------------------ */
+            if (hasGsap) {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // (o avanço do vídeo — targetP — é lido da posição de scroll no
+                // tick; a timeline abaixo cuida só do parallax da interface. O
+                // scrub já é suavizado pelo lerp de displayP, então não há Lenis:
+                // ler a posição nativa mantém vídeo e parallax sempre em sincronia.)
+
+                // A experiência é scrubbed e deve sempre começar do topo — evita
+                // ficar preso no fim (tela branca) quando o navegador restaura a
+                // posição de rolagem ao recarregar.
+                function resetToTop() {
+                    // deep-links com âncora (#produto) são respeitados
+                    if (window.location.hash) { ScrollTrigger.refresh(); return; }
+                    window.scrollTo(0, 0);
+                    targetP = 0; displayP = 0;
+                    ScrollTrigger.refresh();
+                }
+                window.addEventListener('load', () => requestAnimationFrame(resetToTop));
+                resetToTop();
+
+                // Parallax das camadas de interface sobre o vídeo. A escala do
+                // vídeo + feather são procedurais (tick → applyVideo), então a
+                // timeline cuida só do texto, trilho, overlays e lockup final.
+                const tl = gsap.timeline({
+                    defaults: { ease: 'none' },
+                    scrollTrigger: {
+                        trigger: hero,
+                        start: 'top top',
+                        end: 'bottom bottom',
+                        scrub: 0.6,
+                        invalidateOnRefresh: true
+                    }
+                });
+
+                // parallax tipográfico em camadas: o título sobe devagar;
+                // subtítulo e botões sobem progressivamente mais rápido
+                tl.to(['.eyebrow', '.headline'], { y: () => -window.innerHeight * 0.16, duration: 1 }, 0)
+                  .to('.subcopy', { y: () => -window.innerHeight * 0.27, duration: 1 }, 0)
+                  .to('.hero__actions', { y: () => -window.innerHeight * 0.36, duration: 1 }, 0)
+                  .to('#hero-copy', { autoAlpha: 0, duration: 0.3, ease: 'power1.in' }, 0.18)
+                  .to('#hero-rail', { y: () => window.innerHeight * 0.08, duration: 1 }, 0)
+                  .to('#ov-left', { opacity: 0.18, duration: 0.45 }, 0.22)
+                  .fromTo('#ov-vignette', { opacity: 0.28 }, { opacity: 0.4, duration: 0.5 }, 0)
+                  .to('#ov-vignette', { opacity: 0.12, duration: 0.5 }, 0.5)
+                  .to('#scroll-hint', { autoAlpha: 0, duration: 0.07 }, 0.02)
+                  .fromTo('#hero-final',
+                      { autoAlpha: 0, x: -28 },
+                      { autoAlpha: 1, x: 0, duration: 0.18, ease: 'power2.out' }, 0.82);
+
+                /* Botões magnéticos (apenas ponteiro fino) */
+                if (window.matchMedia('(pointer: fine)').matches) {
+                    document.querySelectorAll('.magnetic').forEach((el) => {
+                        const setX = gsap.quickTo(el, 'x', { duration: 0.4, ease: 'power3.out' });
+                        const setY = gsap.quickTo(el, 'y', { duration: 0.4, ease: 'power3.out' });
+                        el.addEventListener('mousemove', (e) => {
+                            const r = el.getBoundingClientRect();
+                            setX((e.clientX - r.left - r.width / 2) * 0.18);
+                            setY((e.clientY - r.top - r.height / 2) * 0.18);
+                        });
+                        el.addEventListener('mouseleave', () => { setX(0); setY(0); });
+                    });
+                }
+            } else {
+                /* ------------------------------------------------------------
+                   Fallback sem CDN: scrub + parallax com scroll nativo
+                   ------------------------------------------------------------ */
+                const copy = document.getElementById('hero-copy');
+                const rail = document.getElementById('hero-rail');
+                const hint = document.getElementById('scroll-hint');
+                const finalLockup = document.getElementById('hero-final');
+                const copyLayers = [
+                    { els: document.querySelectorAll('.eyebrow, .headline'), speed: 0.16 },
+                    { els: document.querySelectorAll('.subcopy'), speed: 0.27 },
+                    { els: document.querySelectorAll('.hero__actions'), speed: 0.36 }
+                ];
+
+                // escala/feather do vídeo e fade da marca lateral já vêm do tick;
+                // aqui só movemos as demais camadas de interface.
+                function onScroll() {
+                    // targetP do vídeo é lido no tick; aqui usamos um p local só
+                    // para o parallax da interface
+                    const p = clamp01(window.scrollY / maxScroll);
+
+                    // título devagar, subtítulo e botões progressivamente mais rápido
+                    copyLayers.forEach((layer) => {
+                        const y = -p * window.innerHeight * layer.speed;
+                        layer.els.forEach((el) => { el.style.transform = 'translateY(' + y + 'px)'; });
+                    });
+                    copy.style.opacity = String(Math.max(1 - Math.max(p - 0.18, 0) / 0.3, 0));
+                    rail.style.transform = 'translateY(' + (p * window.innerHeight * 0.08) + 'px)';
+                    hint.style.opacity = p > 0.03 ? '0' : '1';
+
+                    const fp = clamp01((p - 0.82) / 0.18);
+                    finalLockup.style.opacity = String(fp);
+                    finalLockup.style.transform = 'translateX(' + ((1 - fp) * -28) + 'px)';
+                }
+                window.addEventListener('scroll', onScroll, { passive: true });
+                onScroll();
+            }
+
+        })();
+    </script>
+</body>
+
+</html>
